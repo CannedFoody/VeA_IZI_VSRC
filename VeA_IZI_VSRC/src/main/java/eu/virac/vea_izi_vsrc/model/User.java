@@ -13,10 +13,12 @@ import lombok.*;
 @Entity
 
 public class User {
+	
     @Column(name="idUser")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Setter(value=AccessLevel.NONE) private long idUser;
+    @Setter(value=AccessLevel.NONE) 
+    private long idUser;
 
     @Column(name="Name")
     @NotNull

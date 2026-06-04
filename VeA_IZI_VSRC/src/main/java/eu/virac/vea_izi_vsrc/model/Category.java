@@ -19,17 +19,17 @@ import lombok.ToString;
 @Setter 				
 @NoArgsConstructor		
 @ToString				
-@Table(name = "SubCategoryTable")
+@Table(name = "CategoryTable")
 @Entity
-public class SubCategory {
-	
+public class Category {
+
 	@Column(name = "IdSubcategory")
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Setter(value = AccessLevel.NONE)	
-	private long idSubcategory;
+	private long subcategory;
 	
-	@Column(name = "Title", unique = true)	//subcategory names/titles are unique
+	@Column(name = "Title", unique = true)	
 	@NotNull
 	@NotEmpty
 	@Pattern(regexp = "[A-Ž]{1}[A-Ža-ž0-9 ]{3,40}")
@@ -40,9 +40,10 @@ public class SubCategory {
 	@NotEmpty
 	private String description;
 	
-	//Category 
+	//SubCategory
+	private SubCategory subCategory;
 	
-	public SubCategory(String title, String description) {
+	public Category(String title, String description) {
 		setTitle(title);
 		setDescription(description);
 	}
