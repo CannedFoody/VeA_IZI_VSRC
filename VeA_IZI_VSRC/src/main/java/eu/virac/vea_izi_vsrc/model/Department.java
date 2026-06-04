@@ -1,11 +1,6 @@
 package eu.virac.vea_izi_vsrc.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -46,6 +41,12 @@ public class Department {
 	@NotEmpty
 	@Pattern(regexp = "[A-Ža-ž0-9 ]{3,50}")
 	private String goals;
+
+
+	@OneToOne
+	@JoinColumn(name = "idUser")
+	@ToString.Exclude
+	private User user;
 	
 	public Department(String name, String description, String goals) {
 		setName(name);
