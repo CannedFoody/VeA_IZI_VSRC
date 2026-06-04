@@ -12,7 +12,7 @@ import lombok.*;
 @Entity
 public class Department {
 	
-	@Column(name = "IdDepartment")
+	@Column(name = "idDepartment")
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Setter(value = AccessLevel.NONE)
