@@ -16,7 +16,7 @@ public interface ICRUDKPIService {
 	
 	public abstract KPI getKPIById(long idKPI) throws Exception;
 	
-	public abstract KPI updateKPI(long idKPI, LocalDate creationDate, String title, String description, 
+	public abstract KPI updateKPI(long idKPI, LocalDate creationDate, LocalDate deadline, String title, String description,
 			KPIStatus status, Category category, User creator, User overlooker) throws Exception;
 	
 	public abstract void deleteKPI(long idKPI) throws Exception;

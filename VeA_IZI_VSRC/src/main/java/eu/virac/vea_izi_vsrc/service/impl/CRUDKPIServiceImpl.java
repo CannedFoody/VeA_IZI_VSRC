@@ -62,7 +62,7 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 	}
 
 	@Override
-	public KPI updateKPI(long idKPI, LocalDate creationDate, String title, String description, KPIStatus status,
+	public KPI updateKPI(long idKPI, LocalDate creationDate, LocalDate deadline, String title, String description, KPIStatus status,
 			Category category, User creator, User overlooker) throws Exception {
 		if (idKPI < 1) {
 			throw new Exception("Invalid KPI ID passed...");
@@ -70,7 +70,7 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (!kpiRepo.existsById(idKPI)) {
 			throw new Exception("No category exists by that ID...");
 		}
-		if (creationDate == null || title == null || description == null || status == null || category == null 
+		if (creationDate == null || deadline == null || title == null || description == null || status == null || category == null
 				|| creator == null || overlooker == null) {
 			throw new Exception("Incorrect KPI input data...");
 		}
@@ -80,6 +80,11 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if(!kpi_to_update.getCreationDate().equals(creationDate)){
 			kpi_to_update.setCreationDate(creationDate);
         }
+
+		if(!kpi_to_update.getDeadline().equals(deadline)){
+			kpi_to_update.setDeadline(deadline);
+		}
+
 		if (!kpi_to_update.getTitle().equals(title)) {
 			kpi_to_update.setTitle(title);
 		}

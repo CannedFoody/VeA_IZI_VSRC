@@ -24,6 +24,10 @@ public class KPI {
     @NotNull
     private LocalDate creationDate;
 
+    @Column(name = "deadline")
+    @NotNull
+    private LocalDate deadline;
+
     @Column(name = "title")
     @NotEmpty
     @NotNull
@@ -53,8 +57,9 @@ public class KPI {
     @JoinColumn(name = "overlookerId")
     private User overlooker;
 
-    public KPI(LocalDate creationDate, String title, String description, Category category, User creator, User overlooker) {
+    public KPI(LocalDate creationDate, LocalDate deadline, String title, String description, Category category, User creator, User overlooker) {
         setCreationDate(creationDate);
+        setDeadline(deadline);
         setTitle(title);
         setDescription(description);
         setCategory(category);
