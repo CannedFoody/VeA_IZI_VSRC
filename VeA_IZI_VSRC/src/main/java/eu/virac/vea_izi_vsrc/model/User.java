@@ -39,10 +39,10 @@ public class User {
     @Column(name="Role")
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "\"[A-Ž]{1}[a-ž]{2,20}([ ]{1}([A-Ž]{1}[a-ž]{2,20}))?\"")
+    @Pattern(regexp = "[A-Ž]{1}[a-ž]{2,20}([ ]{1}([A-Ž]{1}[a-ž]{2,20}))?")
     private String role;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idDepartment")
     @ToString.Exclude
     private Department department;

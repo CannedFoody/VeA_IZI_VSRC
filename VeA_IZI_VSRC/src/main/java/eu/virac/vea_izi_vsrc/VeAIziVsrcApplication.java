@@ -56,7 +56,7 @@ public class VeAIziVsrcApplication {
                 User u6 = new User("Aaaaaa", "Bbbbbb", "test6@test.com", "Worker", d3);
 
 
-                user_repo.saveAll(Arrays.asList(u1, u2, u3));
+                user_repo.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
 
 //                Department, User, starting_date
                 DepartmentHead dh1 = new DepartmentHead(d1, u1, LocalDate.now());

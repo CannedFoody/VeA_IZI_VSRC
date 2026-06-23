@@ -41,7 +41,6 @@ public class KPI {
     private String description;
 
     @Column(name = "status")
-    @NotNull
     @Enumerated(EnumType.STRING)
     private KPIStatus status;
 
