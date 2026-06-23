@@ -17,4 +17,6 @@ public interface IKPIFilterStatsService{
     public abstract ArrayList<KPI> filterByAfterDeadline() throws Exception;
 
     public abstract ArrayList<KPI> filterByCategory(Category category) throws Exception;
+
+    public abstract ArrayList<KPI> filterByCreatorId(long creator_id) throws Exception;
 }

@@ -5,6 +5,8 @@ import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.model.KPI;
 import eu.virac.vea_izi_vsrc.repo.ICategoryRepo;
 import eu.virac.vea_izi_vsrc.repo.IKPIRepo;
+import eu.virac.vea_izi_vsrc.repo.IUserRepo;
+import eu.virac.vea_izi_vsrc.service.IFilterUserService;
 import eu.virac.vea_izi_vsrc.service.IKPIFilterStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,10 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
     @Autowired
     private ICategoryRepo category_repo;
 
+    @Autowired
+    private IUserRepo user_repo;
+
+//    Finds all the KPIs that were created after the passed date.
     @Override
     public ArrayList<KPI> filterByUploadDateAfter(LocalDate date) throws Exception {
         if(date == null){
@@ -46,7 +52,7 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
     }
 
 
-
+//  Finds all the KPI titles or descriptions containing the passed keyword.
     @Override
     public ArrayList<KPI> filterByKeyword(String keyword) throws Exception {
         if(keyword.isEmpty()){
@@ -67,6 +73,7 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
         }
     }
 
+//    Finds all of the KPIs with the passed status.
     @Override
     public ArrayList<KPI> filterByStatus(KPIStatus status) throws Exception {
         if(status == null){
@@ -91,6 +98,7 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
         }
     }
 
+//    Finds all  the KPIs which deadline for submission has passed.
     @Override
     public ArrayList<KPI> filterByAfterDeadline() throws Exception {
         if(kpi_repo.count() == 0){
@@ -106,6 +114,7 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
         }
     }
 
+//    Find KPI's that have the passed category.
     @Override
     public ArrayList<KPI> filterByCategory(Category category) throws Exception {
         if(category == null){
@@ -124,6 +133,30 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
 
         if(filtered_list.isEmpty()){
             throw new Exception("No KPIs found with that category...");
+        }
+        else{
+            return filtered_list;
+        }
+    }
+
+//    Finds all KPIs made by this User.
+    @Override
+    public ArrayList<KPI> filterByCreatorId(long creator_id) throws Exception {
+        if(creator_id < 1){
+            throw new Exception("Invalid creator id was passed...");
+        }
+
+        if(kpi_repo.count() == 0){
+            throw new Exception("No KPIs to filter....");
+        }
+
+        if(!user_repo.existsById(creator_id)) {
+            throw new Exception("Passed creator ID does not exist in the system...");
+        }
+
+        ArrayList<KPI> filtered_list = kpi_repo.findByCreator(user_repo.findById(creator_id).get());
+        if(filtered_list.isEmpty()){
+            throw new Exception("No KPIs were found that were made by this User...");
         }
         else{
             return filtered_list;

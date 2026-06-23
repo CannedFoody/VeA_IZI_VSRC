@@ -44,7 +44,7 @@ public class Department {
 	@Column(name = "Goals", unique = true)
 	@NotNull
 	@NotEmpty
-	@Pattern(regexp = "[A-Ža-ž0-9 ]{3,50}")
+	@Pattern(regexp = "[A-Ža-ž0-9]{3,50}")
 	private String goals;
 	
 	public Department(String name, String description, String goals) {

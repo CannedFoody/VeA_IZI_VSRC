@@ -22,7 +22,7 @@ public class KPI {
 
     @Column(name = "creationDate")
     @NotNull
-    private LocalDate creationDate;Alr
+    private LocalDate creationDate;
 
     @Column(name = "deadline")
     @NotNull
@@ -46,14 +46,17 @@ public class KPI {
     private KPIStatus status;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "idCategory")
     private Category category;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "creatorId")
     private User creator;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "overlookerId")
     private User overlooker;
 
