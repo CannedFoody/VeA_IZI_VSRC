@@ -5,6 +5,7 @@ import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.model.KPI;
 import eu.virac.vea_izi_vsrc.repo.ICategoryRepo;
 import eu.virac.vea_izi_vsrc.repo.IKPIRepo;
+import eu.virac.vea_izi_vsrc.repo.IProjectRepo;
 import eu.virac.vea_izi_vsrc.repo.IUserRepo;
 import eu.virac.vea_izi_vsrc.service.IFilterUserService;
 import eu.virac.vea_izi_vsrc.service.IKPIFilterStatsService;
@@ -25,6 +26,9 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
 
     @Autowired
     private IUserRepo user_repo;
+    
+    @Autowired
+    private IProjectRepo project_repo;
 
 //    Finds all the KPIs that were created after the passed date.
     @Override
@@ -162,6 +166,27 @@ public class KPIFilterStatsServiceImpl implements IKPIFilterStatsService {
             return filtered_list;
         }
     }
+
+
+	@Override
+	public ArrayList<KPI> filterByProjectId(long idProject) throws Exception {
+		if (idProject < 1) {
+			throw new Exception("Invalid project id was passed...");
+		}
+		if(kpi_repo.count() == 0){
+            throw new Exception("No KPIs to filter....");
+        }
+		if (!project_repo.existsById(idProject)) {
+			throw new Exception("Passed poject ID does not exist in the system...");
+		}
+		
+		ArrayList<KPI> filtered_list = kpi_repo.findByProject(project_repo.findById(idProject).get());
+		
+		if(filtered_list.isEmpty()){
+            throw new Exception("No KPIs were found for this project...");
+        }
+		return filtered_list;
+	}
 
 
 }
