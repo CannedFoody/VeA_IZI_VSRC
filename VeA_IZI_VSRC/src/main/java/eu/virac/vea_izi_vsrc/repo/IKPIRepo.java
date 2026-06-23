@@ -3,7 +3,6 @@ package eu.virac.vea_izi_vsrc.repo;
 import eu.virac.vea_izi_vsrc.model.Category;
 import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.model.KPI;
-import eu.virac.vea_izi_vsrc.model.Project;
 import eu.virac.vea_izi_vsrc.model.User;
 import org.springframework.data.repository.CrudRepository;
 
@@ -22,6 +21,4 @@ public interface IKPIRepo extends CrudRepository<KPI, Long> {
     ArrayList<KPI> findByCategoryIs(Category category);
 
     ArrayList<KPI> findByCreator(User user);
-
-	ArrayList<KPI> findByProject(Project project);
 }

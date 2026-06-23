@@ -20,5 +20,4 @@ public interface IKPIFilterStatsService{
 
     public abstract ArrayList<KPI> filterByCreatorId(long creator_id) throws Exception;
     
-    public abstract ArrayList<KPI> filterByProjectId(long idProject) throws Exception;
 }
