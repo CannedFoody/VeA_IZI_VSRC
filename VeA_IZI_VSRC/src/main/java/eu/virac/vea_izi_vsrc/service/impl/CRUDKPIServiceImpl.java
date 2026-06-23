@@ -55,7 +55,7 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 			throw new Exception("KPI repo is empty...");
 		}
 		if (!kpiRepo.existsById(idKPI)) {
-			throw new Exception("No category exists by that ID...");
+			throw new Exception("No KPI exists by that ID...");
 		}
 		
 		return kpiRepo.findById(idKPI).get();
@@ -80,22 +80,22 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if(!kpi_to_update.getCreationDate().equals(creationDate)){
 			kpi_to_update.setCreationDate(creationDate);
         }
-		if (kpi_to_update.getTitle().equals(title)) {
+		if (!kpi_to_update.getTitle().equals(title)) {
 			kpi_to_update.setTitle(title);
 		}
-		if (kpi_to_update.getDescription().equals(description)) {
+		if (!kpi_to_update.getDescription().equals(description)) {
 			kpi_to_update.setDescription(description);
 		}
-		if (kpi_to_update.getStatus().equals(status)) {
+		if (!kpi_to_update.getStatus().equals(status)) {
 			kpi_to_update.setStatus(status);
 		}
-		if (kpi_to_update.getCategory().equals(category)) {
+		if (!kpi_to_update.getCategory().equals(category)) {
 			kpi_to_update.setCategory(category);
 		}
-		if (kpi_to_update.getCreator().equals(creator)) {
+		if (!kpi_to_update.getCreator().equals(creator)) {
 			kpi_to_update.setCreator(creator);
 		}
-		if (kpi_to_update.getOverlooker().equals(overlooker)) {
+		if (!kpi_to_update.getOverlooker().equals(overlooker)) {
 			kpi_to_update.setOverlooker(overlooker);
 		}
 		
