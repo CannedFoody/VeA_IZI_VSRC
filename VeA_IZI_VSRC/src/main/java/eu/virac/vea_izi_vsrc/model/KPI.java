@@ -22,7 +22,7 @@ public class KPI {
 
     @Column(name = "creationDate")
     @NotNull
-    private LocalDate creationDate;
+    private LocalDate creationDate;Alr
 
     @Column(name = "deadline")
     @NotNull
