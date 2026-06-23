@@ -23,10 +23,10 @@ public class DepartmentHead {
 
     @Column(name = "startingDate")
     @NotNull
-    private LocalDate starting_date;
+    private LocalDate startingDate;
 
     @Column(name = "endingDate")
-    private LocalDate ending_date;
+    private LocalDate endingDate;
 
     @ManyToOne
     @JoinColumn(name = "idDepartment")
@@ -38,9 +38,9 @@ public class DepartmentHead {
     @ToString.Exclude
     private User user;
 
-    public DepartmentHead(Department department, User user, LocalDate starting_date) {
+    public DepartmentHead(Department department, User user, LocalDate startingDate) {
         setDepartment(department);
         setUser(user);
-        setStarting_date(starting_date);
+        setStartingDate(startingDate);
     }
 }

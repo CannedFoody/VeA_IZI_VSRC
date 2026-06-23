@@ -15,7 +15,7 @@ public interface ICRUDDepartmentHeadService {
 	
 	public abstract DepartmentHead getDepartmentHeadById(long departmentHeadId) throws Exception;
 	
-	public abstract DepartmentHead updateDepartmentHead(long departmentHeadId, LocalDate starting_date, LocalDate ending_date, 
+	public abstract DepartmentHead updateDepartmentHead(long departmentHeadId, LocalDate startingDate, LocalDate endingDate,
 			Department department, User user) throws Exception;
 	
 	public abstract void deleteDepartmentHead(long departmentHeadId) throws Exception;

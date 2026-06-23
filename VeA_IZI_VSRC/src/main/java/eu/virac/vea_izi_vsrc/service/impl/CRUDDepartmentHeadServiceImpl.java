@@ -26,7 +26,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (departmentHeadRepo.existsById(departmentHead.getDepartmentHeadId())) {
 			throw new Exception("Category with that ID already exists...");
 		}
-		if (departmentHead.getStarting_date() == null || departmentHead.getEnding_date() == null 
+		if (departmentHead.getStartingDate() == null || departmentHead.getEndingDate() == null
 				|| departmentHead.getDepartment() == null || departmentHead.getUser() == null) {
 			throw new Exception("One or more of the DepartmentHead fields are empty...");
 		}
@@ -61,7 +61,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 	}
 
 	@Override
-	public DepartmentHead updateDepartmentHead(long departmentHeadId, LocalDate starting_date, LocalDate ending_date,
+	public DepartmentHead updateDepartmentHead(long departmentHeadId, LocalDate startingDate, LocalDate endingDate,
 			Department department, User user) throws Exception {
 		if (departmentHeadId < 1) {
 			throw new Exception("Invalid DepartmentHead ID passed...");
@@ -69,17 +69,17 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (!departmentHeadRepo.existsById(departmentHeadId)) {
 			throw new Exception("No DepartmentHead exists by that ID...");
 		}
-		if (starting_date == null || ending_date == null || department == null || user == null) {
+		if (startingDate == null || endingDate == null || department == null || user == null) {
 			throw new Exception("Incorrect DepartmentHead input data...");
 		}
 		
 		DepartmentHead department_head_to_update = departmentHeadRepo.findById(departmentHeadId).get();
 		
-		if (!department_head_to_update.getStarting_date().equals(starting_date)) {
-			department_head_to_update.setStarting_date(starting_date);
+		if (!department_head_to_update.getStartingDate().equals(startingDate)) {
+			department_head_to_update.setStartingDate(startingDate);
 		}
-		if (!department_head_to_update.getEnding_date().equals(ending_date)) {
-			department_head_to_update.setEnding_date(ending_date);
+		if (!department_head_to_update.getEndingDate().equals(endingDate)) {
+			department_head_to_update.setEndingDate(endingDate);
 		}
 		if (!department_head_to_update.getDepartment().equals(department)) {
 			department_head_to_update.setDepartment(department);
