@@ -3,6 +3,7 @@ package eu.virac.vea_izi_vsrc.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import eu.virac.vea_izi_vsrc.model.User;
 
 import java.time.LocalDate;
 

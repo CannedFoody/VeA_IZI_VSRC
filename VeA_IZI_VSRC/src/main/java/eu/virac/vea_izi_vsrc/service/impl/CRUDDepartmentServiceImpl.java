@@ -61,8 +61,8 @@ public class CRUDDepartmentServiceImpl implements ICRUDDepartmentService {
 
     @Override
     public Department updateDepartment(long idDepartment, String name, String description, String goals) throws Exception{
-        if(departmentRepo.count() == 0){
-            throw new Exception("The department repo is empty...");
+        if(!departmentRepo.existsById(idDepartment)){
+            throw new Exception("No department with that ID exists...");
         }
 
         if(idDepartment < 1){
@@ -92,10 +92,6 @@ public class CRUDDepartmentServiceImpl implements ICRUDDepartmentService {
 
     @Override
     public void deleteDepartment(long idDepartment) throws Exception{
-        if(departmentRepo.count() == 0){
-            throw new Exception("The department repo is empty...");
-        }
-
         if(idDepartment < 1){
             throw new Exception("Invalid department ID passed...");
         }
