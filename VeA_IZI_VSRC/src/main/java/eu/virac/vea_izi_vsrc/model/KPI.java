@@ -75,5 +75,8 @@ public class KPI {
         setCategory(category);
         setCreator(creator);
         setOverlooker(overlooker);
+
+//      This is needed because the Spring site needs some sort of value for Status or it just breaks cause it doesnt know how to handle null as a Status
+        setStatus(KPIStatus.InProgress);
     }
 }

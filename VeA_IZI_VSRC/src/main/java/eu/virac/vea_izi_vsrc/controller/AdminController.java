@@ -743,6 +743,9 @@ public class AdminController {
     
     // UPDATE project by ID GET
     // localhost:8080/admin/project/update/2
+
+//    TODO : This doesnt work, no clue why. Something about KPIStatus enum and KPI.getStatus() returning null...
+
     @GetMapping("/project/update/{id}")
     public String updateProjectGet(@PathVariable(name = "id") long id, Model model) {
         

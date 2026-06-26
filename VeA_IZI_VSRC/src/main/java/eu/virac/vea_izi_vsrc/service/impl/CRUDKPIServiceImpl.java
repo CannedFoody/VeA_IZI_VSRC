@@ -24,9 +24,6 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (kpi == null) {
 			throw new Exception("Passed KPI object is null...");
 		}
-		if (kpiRepo.existsById(kpi.getIdKPI())) {
-			throw new Exception("Category with that ID already exists...");
-		}
 		if (kpi.getCreationDate() == null || kpi.getTitle().isEmpty() || kpi.getDescription().isEmpty() 
 				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null || kpi.getOverlooker() == null) {
 			throw new Exception("One or more of the KPI fields are empty...");
