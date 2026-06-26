@@ -1,5 +1,8 @@
 package eu.virac.vea_izi_vsrc.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -44,6 +47,7 @@ public class Task {
 
     @OneToOne
     @JoinColumn(name = "idSubcategory")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private SubCategory subCategory;
 
     public Task(String title, String description, TaskStatus status , KPI kpi, SubCategory subCategory) {
