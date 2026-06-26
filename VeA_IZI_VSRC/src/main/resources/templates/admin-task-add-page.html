@@ -52,12 +52,12 @@
 
         <label>KPI</label>
         <select th:field="*{kpi}">
-            <option th:each="k : ${kpis}" th:value="${k}" th:text="${k.title}"></option>
+            <option th:each="k : ${kpis}" th:value="${k.getIdKPI()}" th:text="${k.title}"></option>
         </select>
 
         <label>SubCategory</label>
         <select th:field="*{subCategory}">
-            <option th:each="s : ${subcategories}" th:value="${s}" th:text="${s.title}"></option>
+            <option th:each="s : ${subcategories}" th:value="${s.getIdSubcategory()}" th:text="${s.title}"></option>
         </select>
 
         <button type="submit">Add</button>

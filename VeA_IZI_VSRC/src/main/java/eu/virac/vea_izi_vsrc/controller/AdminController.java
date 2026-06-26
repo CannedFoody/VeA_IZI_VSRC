@@ -420,8 +420,6 @@ public class AdminController {
 
     // SHOW ALL department heads
     // localhost:8080/admin/departmenthead/show/all
-
-//    TODO : Change ID var name
     @GetMapping("/departmenthead/show/all")
     public String showAllDepartmentHeads(Model model) {
         try {
@@ -829,8 +827,7 @@ public class AdminController {
             return "error-page";
         }
     }
-
-// TODO : Adding needs to be fixed
+    
     // ADD task GET
     // localhost:8080/admin/task/add
     @GetMapping("/task/add")

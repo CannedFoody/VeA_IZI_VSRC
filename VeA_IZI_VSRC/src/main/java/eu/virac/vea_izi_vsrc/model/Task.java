@@ -45,7 +45,7 @@ public class Task {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private KPI kpi;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "idSubcategory")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private SubCategory subCategory;
