@@ -3,6 +3,8 @@ package eu.virac.vea_izi_vsrc.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 @Getter
@@ -41,11 +43,14 @@ public class User {
     @Column(name="Role")
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "[A-Ž]{1}[a-ž]{2,20}([ ]{1}([A-Ž]{1}[a-ž]{2,20}))?")
+//    @Pattern(regexp = "[A-Ž]{1}[a-ž]{2,20}([ ]{1}([A-Ž]{1}[a-ž]{2,20}))?")
+    @Pattern(regexp = "^(Worker|DepartmentHead|Admin)$")
     private String role;
+
 
     @ManyToOne
     @JoinColumn(name = "idDepartment")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Department department;
 

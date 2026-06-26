@@ -4,6 +4,8 @@ import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Setter
 @Getter
@@ -37,6 +39,7 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "idKPI")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private KPI kpi;
 
     @OneToOne

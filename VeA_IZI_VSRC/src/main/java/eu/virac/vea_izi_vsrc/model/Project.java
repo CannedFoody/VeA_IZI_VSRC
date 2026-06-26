@@ -3,6 +3,8 @@ package eu.virac.vea_izi_vsrc.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Setter
 @Getter
@@ -31,6 +33,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "idKPI")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private KPI kpi;
 
     public Project(String title, String description) {
