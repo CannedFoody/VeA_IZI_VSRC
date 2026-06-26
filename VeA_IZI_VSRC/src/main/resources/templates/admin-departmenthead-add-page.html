@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Department Head</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: white; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .content { flex: 1; }
+        h1 { text-align: center; margin-top: 30px; font-size: 26px; font-weight: bold; }
+        form { width: 50%; margin: 30px auto; border: 1px solid #ddd; padding: 20px; font-size: 16px; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 15px; }
+        button { padding: 10px 20px; background: black; color: white; border: none; cursor: pointer; }
+        .footer { padding: 20px; font-size: 12px; color: #444; text-align: center; border-top: 1px solid #ddd; }
+    </style>
+</head>
+
+<body>
+
+<header style="display:flex;align-items:center;justify-content:space-between;padding:12px 25px;border-bottom:1px solid #ddd;">
+    <div style="display:flex;align-items:center;gap:15px;">
+        <div style="width:40px;height:40px;border-radius:50%;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:12px;">Logo</div>
+        <div style="font-size:20px;font-weight:bold;">VeA SR Sistēma</div>
+    </div>
+
+    <nav style="display:flex;gap:25px;font-size:15px;">
+        <span>Access</span>
+        <span>Structure</span>
+        <span>KPI</span>
+        <span style="font-weight:bold;">ADMIN</span>
+    </nav>
+
+    <div style="display:flex;align-items:center;gap:15px;">
+        <span style="font-size:18px;">🌐</span>
+        <span style="font-size:18px;">↪</span>
+    </div>
+</header>
+
+<div class="content">
+    <h1>ADD DEPARTMENT HEAD</h1>
+
+    <form th:action="@{/admin/departmenthead/add}" th:object="${departmenthead}" method="post">
+
+        <label>Starting Date</label>
+        <input type="date" th:field="*{startingDate}"/>
+
+        <label>Ending Date</label>
+        <input type="date" th:field="*{endingDate}" />
+
+        <label>Department</label>
+		<select th:field="*{department}">
+		    <option th:each="d : ${departments}"
+		            th:value="${d.idDepartment}"
+		            th:text="${d.name}">
+		    </option>
+		</select>
+
+        <label>User</label>
+		<select th:field="*{user}">
+		    <option th:each="u : ${users}"
+		            th:value="${u.idUser}"
+		            th:text="${u.name + ' ' + u.surname}">
+		    </option>
+		</select>
+
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<div class="footer">
+    <div>Director: Isaac Newton</div>
+    <div>Office Manager: Marie Curie</div>
+</div>
+
+</body>
+</html>

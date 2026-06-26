@@ -4,8 +4,13 @@ import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Setter
 @Getter
@@ -47,14 +52,17 @@ public class KPI {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "idCategory")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @JoinColumn(name = "creatorId")
     private User creator;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
     @JoinColumn(name = "overlookerId")
     private User overlooker;
