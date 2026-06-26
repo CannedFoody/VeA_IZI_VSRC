@@ -1,8 +1,8 @@
 package eu.virac.vea_izi_vsrc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import eu.virac.vea_izi_vsrc.service.ICRUDCategoryService;
@@ -42,154 +42,153 @@ public class UserController {
     @Autowired
     private ICRUDTaskService taskService;
 
-
     @GetMapping("/all")
-    public ResponseEntity<?> getAllUsers() {
-        try {
-            return ResponseEntity.ok(userService.getAllUsers());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getAllUsers(Model model) throws Exception {
+        model.addAttribute("users", userService.getAllUsers());
+        return "user-user-show-all-page";
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(userService.getUserById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getUserById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute("user", userService.getUserById(id));
+        return "user-user-show-one-page";
     }
-    
+
     @GetMapping("/categories")
-    public ResponseEntity<?> getAllCategories() {
-        try {
-            return ResponseEntity.ok(categoryService.getAllCategories());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-    @GetMapping("/departments")
-    public ResponseEntity<?> getAllDepartments() {
-        try {
-            return ResponseEntity.ok(departmentService.getAllDepartments());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getAllCategories(Model model) throws Exception {
+        model.addAttribute(
+                "categories",
+                categoryService.getAllCategories()
+        );
+        return "user-category-show-all-page";
     }
 
-    @GetMapping("/department-heads")
-    public ResponseEntity<?> getAllDepartmentHeads() {
-        try {
-            return ResponseEntity.ok(
-                    departmentHeadService.getAllDepartmentHeads()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/kpis")
-    public ResponseEntity<?> getAllKPIs() {
-        try {
-            return ResponseEntity.ok(kpiService.getAllKPIs());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/projects")
-    public ResponseEntity<?> getAllProjects() {
-        try {
-            return ResponseEntity.ok(projectService.getAllProjects());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/subcategories")
-    public ResponseEntity<?> getAllSubCategories() {
-        try {
-            return ResponseEntity.ok(
-                    subCategoryService.getAllSubCategories()
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/tasks")
-    public ResponseEntity<?> getAllTasks() {
-        try {
-            return ResponseEntity.ok(taskService.getAllTasks());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
     @GetMapping("/categories/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(categoryService.getCategoryById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getCategoryById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute(
+                "category",
+                categoryService.getCategoryById(id)
+        );
+        return "user-category-show-one-page";
+    }
+
+    @GetMapping("/departments")
+    public String getAllDepartments(Model model) throws Exception {
+        model.addAttribute(
+                "departments",
+                departmentService.getAllDepartments()
+        );
+        return "user-department-show-all-page";
     }
 
     @GetMapping("/departments/{id}")
-    public ResponseEntity<?> getDepartmentById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(departmentService.getDepartmentById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getDepartmentById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute(
+                "department",
+                departmentService.getDepartmentById(id)
+        );
+        return "user-department-show-one-page";
+    }
+
+    @GetMapping("/department-heads")
+    public String getAllDepartmentHeads(Model model) throws Exception {
+        model.addAttribute(
+                "departmentHeads",
+                departmentHeadService.getAllDepartmentHeads()
+        );
+        return "user-departmenthead-show-all-page";
     }
 
     @GetMapping("/department-heads/{id}")
-    public ResponseEntity<?> getDepartmentHeadById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(
-                    departmentHeadService.getDepartmentHeadById(id)
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getDepartmentHeadById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute(
+                "departmentHead",
+                departmentHeadService.getDepartmentHeadById(id)
+        );
+        return "user-departmenthead-show-one-page";
+    }
+
+    @GetMapping("/kpis")
+    public String getAllKPIs(Model model) throws Exception {
+        model.addAttribute("kpis", kpiService.getAllKPIs());
+        return "user-kpi-show-all-page";
     }
 
     @GetMapping("/kpis/{id}")
-    public ResponseEntity<?> getKPIById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(kpiService.getKPIById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getKPIById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute("kpi", kpiService.getKPIById(id));
+        return "user-kpi-show-one-page";
+    }
+
+    @GetMapping("/projects")
+    public String getAllProjects(Model model) throws Exception {
+        model.addAttribute(
+                "projects",
+                projectService.getAllProjects()
+        );
+        return "user-project-show-all-page";
     }
 
     @GetMapping("/projects/{id}")
-    public ResponseEntity<?> getProjectById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(projectService.getProjectById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getProjectById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute(
+                "project",
+                projectService.getProjectById(id)
+        );
+        return "user-project-show-one-page";
+    }
+
+    @GetMapping("/subcategories")
+    public String getAllSubCategories(Model model) throws Exception {
+        model.addAttribute(
+                "subcategories",
+                subCategoryService.getAllSubCategories()
+        );
+        return "user-subcategory-show-all-page";
     }
 
     @GetMapping("/subcategories/{id}")
-    public ResponseEntity<?> getSubCategoryById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(
-                    subCategoryService.getSubCategoryById(id)
-            );
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getSubCategoryById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute(
+                "subcategory",
+                subCategoryService.getSubCategoryById(id)
+        );
+        return "user-subcategory-show-one-page";
+    }
+
+    @GetMapping("/tasks")
+    public String getAllTasks(Model model) throws Exception {
+        model.addAttribute("tasks", taskService.getAllTasks());
+        return "user-task-show-all-page";
     }
 
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<?> getTaskById(@PathVariable long id) {
-        try {
-            return ResponseEntity.ok(taskService.getTaskById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public String getTaskById(
+            @PathVariable long id,
+            Model model) throws Exception {
+
+        model.addAttribute("task", taskService.getTaskById(id));
+        return "user-task-show-one-page";
     }
 }
