@@ -20,9 +20,6 @@ public class CRUDCategoryServiceImpl implements ICRUDCategoryService {
 		if (category == null) {
 			throw new Exception("Passed category object is null...");
 		}
-		if (categoryRepo.existsById(category.getIdCategory())) {
-			throw new Exception("Category with that ID already exists...");
-		}
 		if (category.getName().isEmpty() || category.getDescription().isEmpty()) {
 			throw new Exception("Category name or description field is empty...");
 		}

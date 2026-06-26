@@ -112,7 +112,6 @@ public class AdminController {
     // After successful creation redirects to: localhost:8080/admin/category/show/all
     @PostMapping("/category/add")
     public String addCategoryPost(Category category, Model model) {
-        
         try {
             categoryService.createNewCategory(category);
             model.addAttribute("package", categoryService.getAllCategories());
@@ -421,9 +420,10 @@ public class AdminController {
 
     // SHOW ALL department heads
     // localhost:8080/admin/departmenthead/show/all
+
+//    TODO : Change ID var name
     @GetMapping("/departmenthead/show/all")
     public String showAllDepartmentHeads(Model model) {
-        
         try {
             model.addAttribute("package", departmentHeadService.getAllDepartmentHeads());
             return "admin-departmenthead-show-all-page";
@@ -613,6 +613,8 @@ public class AdminController {
 
     // UPDATE KPI by ID GET
     // localhost:8080/admin/kpi/update/3
+
+//    TODO : Read the date from the object and display it in update page.
     @GetMapping("/kpi/update/{id}")
     public String updateKPIGet(@PathVariable(name = "id") long id, Model model) {
         
@@ -829,7 +831,7 @@ public class AdminController {
         }
     }
 
-
+// TODO : Adding needs to be fixed
     // ADD task GET
     // localhost:8080/admin/task/add
     @GetMapping("/task/add")
@@ -960,6 +962,7 @@ public class AdminController {
 
     // ADD user GET
     // localhost:8080/admin/user/add
+//    TODO : Needs fixing, possibly same problem with the IDs as before.
     @GetMapping("/user/add")
     public String addUserGet(Model model) {
         

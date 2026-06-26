@@ -50,16 +50,16 @@
         </tr>
 
         <tr th:each="dh : ${package}">
-            <td th:text="${dh.idDepartmentHead}"></td>
+            <td th:text="${dh.departmentHeadId}"></td>
             <td th:text="${dh.startingDate}"></td>
             <td th:text="${dh.endingDate}"></td>
             <td th:text="${dh.department.name}"></td>
 			<td th:text="${dh.user.name + ' ' + dh.user.surname}"></td>
 
             <td>
-                <a class="btn" th:href="@{/admin/departmenthead/show/{id}(id=${dh.idDepartmentHead})}">View</a>
-                <a class="btn" th:href="@{/admin/departmenthead/update/{id}(id=${dh.idDepartmentHead})}">Edit</a>
-                <a class="btn" th:href="@{/admin/departmenthead/remove/{id}(id=${dh.idDepartmentHead})}">Delete</a>
+                <a class="btn" th:href="@{/admin/departmenthead/show/{id}(id=${dh.departmentHeadId})}">View</a>
+                <a class="btn" th:href="@{/admin/departmenthead/update/{id}(id=${dh.departmentHeadId})}">Edit</a>
+                <a class="btn" th:href="@{/admin/departmenthead/remove/{id}(id=${dh.departmentHeadId})}">Delete</a>
             </td>
         </tr>
     </table>

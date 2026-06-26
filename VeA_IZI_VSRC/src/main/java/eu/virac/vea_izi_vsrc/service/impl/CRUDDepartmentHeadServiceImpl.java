@@ -23,10 +23,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (departmentHead == null) {
 			throw new Exception("Passed DepartmentHead object is null...");
 		}
-		if (departmentHeadRepo.existsById(departmentHead.getDepartmentHeadId())) {
-			throw new Exception("Category with that ID already exists...");
-		}
-		if (departmentHead.getStartingDate() == null || departmentHead.getEndingDate() == null
+		if (departmentHead.getStartingDate() == null
 				|| departmentHead.getDepartment() == null || departmentHead.getUser() == null) {
 			throw new Exception("One or more of the DepartmentHead fields are empty...");
 		}
@@ -69,7 +66,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (!departmentHeadRepo.existsById(departmentHeadId)) {
 			throw new Exception("No DepartmentHead exists by that ID...");
 		}
-		if (startingDate == null || endingDate == null || department == null || user == null) {
+		if (startingDate == null || department == null || user == null) {
 			throw new Exception("Incorrect DepartmentHead input data...");
 		}
 		
