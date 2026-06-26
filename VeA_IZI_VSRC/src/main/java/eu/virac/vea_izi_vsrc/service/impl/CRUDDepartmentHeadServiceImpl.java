@@ -75,7 +75,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (!department_head_to_update.getStartingDate().equals(startingDate)) {
 			department_head_to_update.setStartingDate(startingDate);
 		}
-		if (!department_head_to_update.getEndingDate().equals(endingDate)) {
+		if (endingDate != null){
 			department_head_to_update.setEndingDate(endingDate);
 		}
 		if (!department_head_to_update.getDepartment().equals(department)) {

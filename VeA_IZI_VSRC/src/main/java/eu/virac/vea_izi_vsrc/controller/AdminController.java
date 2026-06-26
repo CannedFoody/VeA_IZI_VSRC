@@ -614,7 +614,6 @@ public class AdminController {
     // UPDATE KPI by ID GET
     // localhost:8080/admin/kpi/update/3
 
-//    TODO : Read the date from the object and display it in update page.
     @GetMapping("/kpi/update/{id}")
     public String updateKPIGet(@PathVariable(name = "id") long id, Model model) {
         
