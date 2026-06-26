@@ -827,7 +827,7 @@ public class AdminController {
             return "error-page";
         }
     }
-    
+
     // ADD task GET
     // localhost:8080/admin/task/add
     @GetMapping("/task/add")
@@ -958,7 +958,6 @@ public class AdminController {
 
     // ADD user GET
     // localhost:8080/admin/user/add
-//    TODO : Needs fixing, possibly same problem with the IDs as before.
     @GetMapping("/user/add")
     public String addUserGet(Model model) {
         

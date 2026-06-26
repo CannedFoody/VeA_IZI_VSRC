@@ -51,9 +51,9 @@
 
         <label>Role</label>
         <select th:field="*{role}">
-            <option>Worker</option>
-            <option>Department Head</option>
-            <option>Admin</option>
+            <option th:value="Worker">Worker</option>
+            <option th:value="DepartmentHead">Department Head</option>
+            <option th:value="Admin">Admin</option>
         </select>
 
         <label>Department</label>
