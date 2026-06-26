@@ -27,7 +27,7 @@ public class SubCategory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Setter(value = AccessLevel.NONE)	
-	private long IdSubcategory;
+	private long idSubcategory;
 	
 	@Column(name = "Title", unique = true)	//subcategory names/titles are unique
 	@NotNull
@@ -39,6 +39,8 @@ public class SubCategory {
 	@NotNull
 	@NotEmpty
 	private String description;
+	
+	//Category 
 	
 	public SubCategory(String title, String description) {
 		setTitle(title);
