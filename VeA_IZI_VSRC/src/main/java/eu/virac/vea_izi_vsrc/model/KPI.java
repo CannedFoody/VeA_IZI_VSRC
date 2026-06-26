@@ -7,6 +7,9 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -47,6 +50,7 @@ public class KPI {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "idCategory")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
     @ManyToOne
