@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: white; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .content { flex: 1; }
+        h1 { text-align: center; margin-top: 30px; font-size: 26px; font-weight: bold; }
+        .box { width: 50%; margin: 30px auto; border: 1px solid #ddd; padding: 20px; font-size: 16px; }
+        .footer { padding: 20px; font-size: 12px; color: #444; text-align: center; border-top: 1px solid #ddd; }
+    </style>
+</head>
+
+<body>
+
+<header style="display:flex;align-items:center;justify-content:space-between;padding:12px 25px;border-bottom:1px solid #ddd;">
+    <div style="display:flex;align-items:center;gap:15px;">
+        <div style="width:40px;height:40px;border-radius:50%;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:12px;">Logo</div>
+        <div style="font-size:20px;font-weight:bold;">VeA SR Sistēma</div>
+    </div>
+
+    <nav style="display:flex;gap:25px;font-size:15px;">
+        <span>Access</span>
+        <span>Structure</span>
+        <span>KPI</span>
+    </nav>
+
+    <div style="display:flex;align-items:center;gap:15px;">
+        <span style="font-size:18px;">🌐</span>
+        <span style="font-size:18px;">↪</span>
+    </div>
+</header>
+
+<div class="content">
+    <h1>USER DETAILS</h1>
+
+    <div class="box">
+        <p><strong>Name:</strong> <span th:text="${package.name}"></span></p>
+        <p><strong>Surname:</strong> <span th:text="${package.surname}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${package.email}"></span></p>
+        <p><strong>Role:</strong> <span th:text="${package.role}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${package.department != null ? package.department.name : '—'}"></span></p>
+    </div>
+</div>
+
+<div class="footer">
+    <div>Director: Isaac Newton</div>
+    <div>Office Manager: Marie Curie</div>
+</div>
+
+</body>
+</html>
