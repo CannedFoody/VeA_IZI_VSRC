@@ -46,7 +46,7 @@
             <th>User</th>
         </tr>
 
-        <tr th:each="dh : ${package}">
+        <tr th:each="dh : ${departmentHeads}">
             <td th:text="${dh.startingDate}"></td>
             <td th:text="${dh.endingDate}"></td>
             <td th:text="${dh.department.name}"></td>

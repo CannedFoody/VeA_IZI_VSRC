@@ -16,7 +16,7 @@ import eu.virac.vea_izi_vsrc.service.ICRUDUserService;
 
 @Controller
 @RequestMapping("/User")
-public class UserController {
+public class    UserController {
 
     @Autowired
     private ICRUDUserService userService;

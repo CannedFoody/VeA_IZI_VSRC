@@ -45,7 +45,7 @@
             <th>SubCategory</th>
         </tr>
 
-        <tr th:each="t : ${package}">
+        <tr th:each="t : ${tasks}">
             <td th:text="${t.title}"></td>
             <td th:text="${t.description}"></td>
             <td th:text="${t.status}"></td>

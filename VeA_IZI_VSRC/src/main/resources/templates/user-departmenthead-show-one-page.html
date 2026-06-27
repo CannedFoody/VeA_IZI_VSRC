@@ -36,10 +36,10 @@
     <h1>DEPARTMENT HEAD DETAILS</h1>
 
     <div class="box">
-        <p><strong>Starting Date:</strong> <span th:text="${package.startingDate}"></span></p>
-        <p><strong>Ending Date:</strong> <span th:text="${package.endingDate}"></span></p>
-        <p><strong>Department:</strong> <span th:text="${package.department.name}"></span></p>
-		<p><strong>User:</strong> <span th:text="${package.user.name + ' ' + package.user.surname}"></span></p>
+        <p><strong>Starting Date:</strong> <span th:text="${departmentHead.startingDate}"></span></p>
+        <p><strong>Ending Date:</strong> <span th:text="${departmentHead.endingDate}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${departmentHead.department.name}"></span></p>
+		<p><strong>User:</strong> <span th:text="${departmentHead.user.name + ' ' + departmentHead.user.surname}"></span></p>
     </div>
 </div>
 

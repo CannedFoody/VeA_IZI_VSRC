@@ -36,11 +36,11 @@
     <h1>USER DETAILS</h1>
 
     <div class="box">
-        <p><strong>Name:</strong> <span th:text="${package.name}"></span></p>
-        <p><strong>Surname:</strong> <span th:text="${package.surname}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${package.email}"></span></p>
-        <p><strong>Role:</strong> <span th:text="${package.role}"></span></p>
-        <p><strong>Department:</strong> <span th:text="${package.department != null ? package.department.name : '—'}"></span></p>
+        <p><strong>Name:</strong> <span th:text="${user.name}"></span></p>
+        <p><strong>Surname:</strong> <span th:text="${user.surname}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+        <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+        <p><strong>Department:</strong> <span th:text="${user.department != null ? user.department.name : '—'}"></span></p>
     </div>
 </div>
 
