@@ -1,0 +1,14 @@
+services:
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: izi-kafka
+    ports:
+      - "9092:9092"
+
+  # Fake SMTP server: catches all emails, shows them in a web inbox
+  mailpit:
+    image: axllent/mailpit
+    container_name: izi-mailpit
+    ports:
+      - "1025:1025"   # SMTP (the app sends here)
+      - "8025:8025"   # Web inbox: http://localhost:8025

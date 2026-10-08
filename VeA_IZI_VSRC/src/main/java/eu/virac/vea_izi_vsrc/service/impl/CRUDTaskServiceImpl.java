@@ -2,6 +2,7 @@ package eu.virac.vea_izi_vsrc.service.impl;
 
 import eu.virac.vea_izi_vsrc.model.Task;
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
+import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.KPI;
 import eu.virac.vea_izi_vsrc.model.SubCategory;
 import eu.virac.vea_izi_vsrc.model.Task;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 
 @Service
 public class CRUDTaskServiceImpl implements ICRUDTaskService {
-
+	
     @Autowired
     private ITaskRepo task_repo;
 
@@ -26,6 +27,9 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 
     @Autowired
     private ISubCategoryRepo sub_cat_repo;
+    
+    @Autowired
+	private NotificationEventProducer producer;
 
     @Override
     public Task createNewTask(Task task) throws Exception {
@@ -91,6 +95,7 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
         }
 
         Task task_to_update = task_repo.findById(idTask).get();
+        TaskStatus oldStatus = task_to_update.getStatus();
 
         if(!task_to_update.getTitle().equals(title)){
             task_to_update.setTitle(title);
