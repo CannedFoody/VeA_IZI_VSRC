@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.virac.vea_izi_vsrc.event.KpiCreatedEvent;
+import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.Category;
 import eu.virac.vea_izi_vsrc.model.KPI;
 import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.repo.IKPIRepo;
+import eu.virac.vea_izi_vsrc.repo.IUserRepo;
 import eu.virac.vea_izi_vsrc.service.ICRUDKPIService;
 
 @Service
@@ -18,18 +21,34 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 
 	@Autowired
 	private IKPIRepo kpiRepo;
-	
+
+	@Autowired
+	private IUserRepo userRepo;
+
+	@Autowired
+	private NotificationEventProducer producer;
+
 	@Override
 	public KPI createNewKPI(KPI kpi) throws Exception {
 		if (kpi == null) {
 			throw new Exception("Passed KPI object is null...");
 		}
-		if (kpi.getCreationDate() == null || kpi.getTitle().isEmpty() || kpi.getDescription().isEmpty() 
-				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null || kpi.getOverlooker() == null) {
+		if (kpi.getCreationDate() == null || kpi.getTitle().isEmpty() || kpi.getDescription().isEmpty()
+				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null
+				|| kpi.getOverlooker() == null) {
 			throw new Exception("One or more of the KPI fields are empty...");
 		}
-		
-		return kpiRepo.save(kpi);
+
+		// return kpiRepo.save(kpi);
+
+		KPI saved = kpiRepo.save(kpi);
+
+		// The overlooker from the form only has its ID, so load the full user for the email
+		userRepo.findById(saved.getOverlooker().getIdUser())
+				.ifPresent(overlooker -> producer.publishKpiCreated(new KpiCreatedEvent(saved.getIdKPI(),
+						saved.getTitle(), saved.getDescription(), String.valueOf(saved.getDeadline()),
+						overlooker.getEmail(), overlooker.getName() + " " + overlooker.getSurname())));
+		return saved;
 	}
 
 	@Override
@@ -37,9 +56,9 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (kpiRepo.count() == 0) {
 			throw new Exception("KPI repo is empty...");
 		}
-		
+
 		ArrayList<KPI> returned_list = (ArrayList<KPI>) kpiRepo.findAll();
-		
+
 		return returned_list;
 	}
 
@@ -54,31 +73,31 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (!kpiRepo.existsById(idKPI)) {
 			throw new Exception("No KPI exists by that ID...");
 		}
-		
+
 		return kpiRepo.findById(idKPI).get();
 	}
 
 	@Override
-	public KPI updateKPI(long idKPI, LocalDate creationDate, LocalDate deadline, String title, String description, KPIStatus status,
-			Category category, User creator, User overlooker) throws Exception {
+	public KPI updateKPI(long idKPI, LocalDate creationDate, LocalDate deadline, String title, String description,
+			KPIStatus status, Category category, User creator, User overlooker) throws Exception {
 		if (idKPI < 1) {
 			throw new Exception("Invalid KPI ID passed...");
 		}
 		if (!kpiRepo.existsById(idKPI)) {
 			throw new Exception("No category exists by that ID...");
 		}
-		if (creationDate == null || deadline == null || title == null || description == null || status == null || category == null
-				|| creator == null || overlooker == null) {
+		if (creationDate == null || deadline == null || title == null || description == null || status == null
+				|| category == null || creator == null || overlooker == null) {
 			throw new Exception("Incorrect KPI input data...");
 		}
-		
-		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
-		
-		if(!kpi_to_update.getCreationDate().equals(creationDate)){
-			kpi_to_update.setCreationDate(creationDate);
-        }
 
-		if(!kpi_to_update.getDeadline().equals(deadline)){
+		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
+
+		if (!kpi_to_update.getCreationDate().equals(creationDate)) {
+			kpi_to_update.setCreationDate(creationDate);
+		}
+
+		if (!kpi_to_update.getDeadline().equals(deadline)) {
 			kpi_to_update.setDeadline(deadline);
 		}
 
@@ -100,7 +119,7 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (!kpi_to_update.getOverlooker().equals(overlooker)) {
 			kpi_to_update.setOverlooker(overlooker);
 		}
-		
+
 		return kpiRepo.save(kpi_to_update);
 	}
 
@@ -109,13 +128,12 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (idKPI < 1) {
 			throw new Exception("Invalid KPI ID passed...");
 		}
-		
+
 		if (kpiRepo.existsById(idKPI)) {
 			kpiRepo.deleteById(idKPI);
+		} else {
+			throw new Exception("No KPI exists by that ID...");
 		}
-		else{
-            throw new Exception("No KPI exists by that ID...");
-        }
 	}
 
 }

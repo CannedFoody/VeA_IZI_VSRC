@@ -126,7 +126,6 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 		Task saved = task_repo.save(task_to_update);
 
 		if (oldStatus != status) {
-			// The KPI from the form only has its ID filled in, so load the full one
 			KPI fullKpi = kpi_repo.findById(kpi.getIdKPI()).get();
 			User overlooker = fullKpi.getOverlooker();
 
