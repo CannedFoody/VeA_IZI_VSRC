@@ -11,14 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 import eu.virac.vea_izi_vsrc.model.*;
 import eu.virac.vea_izi_vsrc.model.fileConvert.ExcelRow;
 import eu.virac.vea_izi_vsrc.service.*;
-import eu.virac.vea_izi_vsrc.service.fileConvert.FileService;
+import eu.virac.vea_izi_vsrc.service.fileConvert.IFileService;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/admin")
 public class FileController {
 
-    @Autowired private FileService fileService;
+    @Autowired private IFileService fileService;
     
 
     @Autowired private ICRUDCategoryService categoryService;

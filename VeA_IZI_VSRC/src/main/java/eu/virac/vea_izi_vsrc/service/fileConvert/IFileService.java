@@ -6,7 +6,7 @@ import java.util.List;
 
 import eu.virac.vea_izi_vsrc.model.fileConvert.ExcelRow;
 
-public interface FileService {
+public interface IFileService {
 
 	// Export a list of ExcelRow objects into an Excel (.xlsx) file. -> The file is streamed directly to the browser.
 	void exportExcel(List<ExcelRow> rows, OutputStream os) throws Exception;

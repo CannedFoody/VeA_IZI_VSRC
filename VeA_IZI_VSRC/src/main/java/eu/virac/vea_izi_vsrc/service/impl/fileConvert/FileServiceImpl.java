@@ -11,10 +11,10 @@ import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.stereotype.Service;
 
 import eu.virac.vea_izi_vsrc.model.fileConvert.ExcelRow;
-import eu.virac.vea_izi_vsrc.service.fileConvert.FileService;
+import eu.virac.vea_izi_vsrc.service.fileConvert.IFileService;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class FileServiceImpl implements IFileService {
 
 	
 	// EXPORT EXCEL
