@@ -59,6 +59,45 @@
             </td>
         </tr>
     </table>
+	
+	<!-- IMPORT / EXPORT BUTTONS FOR subcategory (SHOW ALL)  -->
+
+		    <div style="width:80%;margin:0 auto;display:flex;gap:20px;justify-content:center;">
+
+		        <!-- EXPORT ALL (Excel) -->
+		        <a class="btn"
+		           th:href="@{'/admin/subcategory/show/all/export/excel'}">
+		            Export Excel
+		        </a>
+
+		        <!-- EXPORT ALL (Word) -->
+		        <a class="btn"
+		           th:href="@{'/admin/subcategory/show/all/export/word'}">
+		            Export Word
+		        </a>
+		    </div>
+
+		    <br>
+
+		    <!-- IMPORT FORMS -->
+		    <div style="width:80%;margin:0 auto;display:flex;gap:20px;justify-content:center;">
+
+		        <!-- IMPORT EXCEL -->
+		        <form th:action="@{'/admin/subcategory/show/all/import/excel'}"
+		              method="post" enctype="multipart/form-data">
+		            <input type="file" name="file" accept=".xlsx" required>
+		            <button class="btn" type="submit">Import Excel</button>
+		        </form>
+
+		        <!-- IMPORT WORD -->
+		        <form th:action="@{'/admin/subcategory/show/all/import/word'}"
+		              method="post" enctype="multipart/form-data">
+		            <input type="file" name="file" accept=".docx" required>
+		            <button class="btn" type="submit">Import Word</button>
+		        </form>
+		    </div>
+
+		</div>
 </div>
 
 <div class="footer">
