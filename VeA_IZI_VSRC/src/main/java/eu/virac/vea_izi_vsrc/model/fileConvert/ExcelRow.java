@@ -21,34 +21,29 @@ public class ExcelRow {
     @Setter(AccessLevel.NONE)
     private long idExcelRow;
 
-    // ID of the original entity (Category, KPI, Task, etc.)
-    // This is ONLY informational during export.
-    // Import NEVER uses this ID bcs DB generates new IDs.
+    
+    // Entity/table name: "category", "user", "kpi", etc.
+    @Column(name = "entityName")
+    private String entityName;
+
+    // ID of the record in that entity table.
+    // ONLY informational during export.
     @Column(name = "entityId")
     private Long entityId;
 
-    @Column(name = "col1")
-    private String col1;
+    // Column name like in localhost (matches HTML <th> and Excel/Word header)
+    @Column(name = "columnName")
+    private String columnName;
 
-    @Column(name = "col2")
-    private String col2;
+    // Column value like in localhost (matches HTML <td> and Excel/Word cell)
+    @Column(name = "columnValue")
+    private String columnValue;
 
-    @Column(name = "col3")
-    private String col3;
-
-    @Column(name = "col4")
-    private String col4;
-
-    @Column(name = "col5")
-    private String col5;
-
-    
-    public ExcelRow(Long entityId, String col1, String col2, String col3, String col4, String col5) {
+    public ExcelRow(String entityName, Long entityId, String columnName, String columnValue) {
+        setEntityName(entityName);
         setEntityId(entityId);
-        setCol1(col1); 
-        setCol2(col2);
-        setCol3(col3);
-        setCol4(col4);
-        setCol5(col5);
+        setColumnName(columnName);
+        setColumnValue(columnValue == null ? "" : columnValue);	
+        //if columnValue = null, use an empty string. if !=null, use the real value.
     }
 }
