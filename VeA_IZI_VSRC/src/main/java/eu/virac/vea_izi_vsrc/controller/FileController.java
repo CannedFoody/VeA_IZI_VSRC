@@ -463,9 +463,6 @@ public class FileController {
 	// .../admin/{entity}/show/{id}/import/word
     
     // Converts imported ExcelRow list into real entity objects and saves them.
-    // Rows are grouped by entityId so each object receives all its fields before saving.
-    
-	// Converts imported ExcelRow list into real entity objects and saves them.
 	// ID is ignored because database generates it automatically.
 	private void saveRowsToEntity(String entity, List<ExcelRow> rows) throws Exception {
 	
