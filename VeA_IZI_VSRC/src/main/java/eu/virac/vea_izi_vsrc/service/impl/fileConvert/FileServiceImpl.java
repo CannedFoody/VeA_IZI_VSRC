@@ -1,9 +1,13 @@
 package eu.virac.vea_izi_vsrc.service.impl.fileConvert;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -16,196 +20,263 @@ import eu.virac.vea_izi_vsrc.service.fileConvert.IFileService;
 @Service
 public class FileServiceImpl implements IFileService {
 
-	
-	// EXPORT EXCEL
-    @Override
-    public void exportExcel(List<ExcelRow> rows, OutputStream os) throws Exception {
 
-        if (rows == null || rows.isEmpty()) {
-            throw new Exception("No data available for export.");
+	
+    // EXPORT EXCEL 
+    @Override
+    public byte[] exportExcel(List<ExcelRow> rows) throws Exception {
+
+        if(rows == null || rows.isEmpty()) {
+            throw new Exception("Nav datu eksportam");
         }
-        
-        // Create Excel workbook in memory
+
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("data");
 
-        int rowIdx = 0;
+        Map<Long, List<ExcelRow>> grouped = groupByEntity(rows);
+        List<String> headers = collectHeaders(rows);
+
+        int r = 0;
 
         // Header row
-        Row header = sheet.createRow(rowIdx++);
-        header.createCell(0).setCellValue("Entity ID");
-        header.createCell(1).setCellValue("COL1");
-        header.createCell(2).setCellValue("COL2");
-        header.createCell(3).setCellValue("COL3");
-        header.createCell(4).setCellValue("COL4");
-        header.createCell(5).setCellValue("COL5");
-
-        
-        // Data rows
-        for (ExcelRow r : rows) {
-            Row row = sheet.createRow(rowIdx++);
-            row.createCell(0).setCellValue(r.getEntityId() == null ? 0 : r.getEntityId());
-            row.createCell(1).setCellValue(safe(r.getCol1()));
-            row.createCell(2).setCellValue(safe(r.getCol2()));
-            row.createCell(3).setCellValue(safe(r.getCol3()));
-            row.createCell(4).setCellValue(safe(r.getCol4()));
-            row.createCell(5).setCellValue(safe(r.getCol5()));
+        Row headerRow = sheet.createRow(r++);
+        int col = 0;
+        headerRow.createCell(col++).setCellValue("ID");
+        for(String h : headers) {
+            if(!h.equals("ID")) {
+                headerRow.createCell(col++).setCellValue(h);
+            }
         }
 
-        
-        // Stream file to browser (NOT saved on server)
-        wb.write(os);
+        // Data rows
+        for(var entry : grouped.entrySet()) {
+
+            Long entityId = entry.getKey();
+            List<ExcelRow> entityRows = entry.getValue();
+
+            Row row = sheet.createRow(r++);
+            int c = 0;
+
+         // ID must be written as String, otherwise POI throws error
+            row.createCell(c++).setCellValue(entityId == null ? "" : String.valueOf(entityId));
+
+            for(String h : headers) {
+                if(h.equals("ID")) continue;
+                row.createCell(c++).setCellValue(findValue(entityRows, h));
+            }
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        wb.write(bos);
         wb.close();
+
+        return bos.toByteArray();
     }
 
-    
-    // IMPORT EXCEL
+
+
+    // IMPORT EXCEL 
     @Override
-    public List<ExcelRow> importExcel(InputStream is) throws Exception {
+    public List<ExcelRow> importExcel(byte[] fileBytes) throws Exception {
+
+        if(fileBytes == null || fileBytes.length == 0) {
+            throw new Exception("Faila saturs ir tukšs");
+        }
 
         List<ExcelRow> rows = new ArrayList<>();
 
-        Workbook wb;
-        try {
-            wb = new XSSFWorkbook(is);		// Read file from memory
-        }
-        catch (Exception e) {
-            throw new Exception("Invalid Excel file format.");
-        }
-
+        Workbook wb = new XSSFWorkbook(new ByteArrayInputStream(fileBytes));
         Sheet sheet = wb.getSheetAt(0);
 
-        boolean header = true;
-        for (Row row : sheet) {
-            if (header) {
-                header = false;		// Skip header row
-                continue;
+        if(sheet == null) {
+            throw new Exception("Excel failā nav nevienas lapas");
+        }
+
+        var it = sheet.iterator();
+        if(!it.hasNext()) {
+            throw new Exception("Excel failā nav datu");
+        }
+
+        Row headerRow = it.next();
+        List<String> headers = new ArrayList<>();
+        for(int i = 0; i < headerRow.getLastCellNum(); i++) {
+            headers.add(getCellValue(headerRow.getCell(i)));
+        }
+
+        int idIndex = headers.indexOf("ID");
+        if(idIndex == -1) {
+            throw new Exception("Excel failā nav ID kolonnas");
+        }
+
+        while(it.hasNext()) {
+            Row row = it.next();
+
+            Long entityId = parseLong(getCellValue(row.getCell(idIndex)));
+
+            for(int i = 0; i < headers.size(); i++) {
+                if(i == idIndex) continue;
+
+                String columnName = headers.get(i);
+                String columnValue = getCellValue(row.getCell(i));
+
+                rows.add(new ExcelRow(null, entityId, columnName, columnValue));
             }
-
-            ExcelRow r = new ExcelRow();
-            r.setEntityId(getLong(row, 0)); 	// informational only
-            r.setCol1(getString(row, 1));
-            r.setCol2(getString(row, 2));
-            r.setCol3(getString(row, 3));
-            r.setCol4(getString(row, 4));
-            r.setCol5(getString(row, 5));
-
-            rows.add(r);
         }
 
         wb.close();
-        return rows;		// Controller converts these into NEW entities
+        return rows;
     }
 
-    
-    // Excel stores numbers as double, even if they look like integers.
-    // Reads NUMBERS from excel -> 5 is 5.0
-    // for entityId
-    private Long getLong(Row row, int index) {
-        try {
-            return (long) row.getCell(index).getNumericCellValue();
+
+
+    // EXPORT WORD 
+    @Override
+    public byte[] exportWord(List<ExcelRow> rows) throws Exception {
+
+        if(rows == null || rows.isEmpty()) {
+            throw new Exception("Nav datu eksportam");
         }
-        catch (Exception e) {
+
+        Map<Long, List<ExcelRow>> grouped = groupByEntity(rows);
+        List<String> headers = collectHeaders(rows);
+
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable();
+
+        // Header row
+        XWPFTableRow headerRow = table.getRow(0);
+        headerRow.getCell(0).setText("ID");
+        for(String h : headers) {
+            if(!h.equals("ID")) {
+                headerRow.addNewTableCell().setText(h);
+            }
+        }
+
+        // Data rows
+        for(var entry : grouped.entrySet()) {
+
+            Long entityId = entry.getKey();
+            List<ExcelRow> entityRows = entry.getValue();
+
+            XWPFTableRow row = table.createRow();
+            int c = 0;
+
+            row.getCell(c++).setText(entityId == null ? "" : String.valueOf(entityId));
+
+            for(String h : headers) {
+                if(h.equals("ID")) continue;
+                row.getCell(c++).setText(findValue(entityRows, h));
+            }
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        doc.write(bos);
+        doc.close();
+
+        return bos.toByteArray();
+    }
+
+
+
+    // IMPORT WORD 
+    @Override
+    public List<ExcelRow> importWord(byte[] fileBytes) throws Exception {
+
+        if(fileBytes == null || fileBytes.length == 0) {
+            throw new Exception("Faila saturs ir tukšs");
+        }
+
+        List<ExcelRow> rows = new ArrayList<>();
+
+        XWPFDocument doc = new XWPFDocument(new ByteArrayInputStream(fileBytes));
+
+        for(XWPFTable table : doc.getTables()) {
+
+            List<XWPFTableRow> tableRows = table.getRows();
+            if(tableRows.isEmpty()) {
+                throw new Exception("Word tabula ir tukša");
+            }
+
+            XWPFTableRow headerRow = tableRows.get(0);
+            List<String> headers = new ArrayList<>();
+            for(int i = 0; i < headerRow.getTableCells().size(); i++) {
+                headers.add(headerRow.getCell(i).getText());
+            }
+
+            int idIndex = headers.indexOf("ID");
+            if(idIndex == -1) {
+                throw new Exception("Word failā nav ID kolonnas");
+            }
+
+            for(int r = 1; r < tableRows.size(); r++) {
+
+                XWPFTableRow tr = tableRows.get(r);
+                Long entityId = parseLong(tr.getCell(idIndex).getText());
+
+                for(int i = 0; i < headers.size(); i++) {
+                    if(i == idIndex) continue;
+
+                    String columnName = headers.get(i);
+                    String columnValue = tr.getCell(i).getText();
+
+                    rows.add(new ExcelRow(null, entityId, columnName, columnValue));
+                }
+            }
+        }
+
+        doc.close();
+        return rows;
+    }
+
+
+    // -----------------------------------------------------
+    // HELPERS 
+    // -----------------------------------------------------
+    private Map<Long, List<ExcelRow>> groupByEntity(List<ExcelRow> rows) {
+        Map<Long, List<ExcelRow>> map = new LinkedHashMap<>();
+        for(ExcelRow r : rows) {
+            map.computeIfAbsent(r.getEntityId(), k -> new ArrayList<>()).add(r);
+        }
+        return map;
+    }
+
+    private List<String> collectHeaders(List<ExcelRow> rows) {
+        List<String> headers = new ArrayList<>();
+        for(ExcelRow r : rows) {
+            if(!headers.contains(r.getColumnName())) {
+                headers.add(r.getColumnName());
+            }
+        }
+        return headers;
+    }
+
+    private String findValue(List<ExcelRow> rows, String columnName) {
+        for(ExcelRow r : rows) {
+            if(columnName.equals(r.getColumnName())) {
+                return r.getColumnValue();
+            }
+        }
+        return "";
+    }
+
+    private String getCellValue(Cell cell) {
+        if(cell == null) return "";
+        return switch(cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
+            default -> "";
+        };
+    }
+
+    private Long parseLong(String s) {
+        try {
+            return Long.parseLong(s.trim());
+        }
+        catch(Exception e) {
             return null;
         }
     }
 
-    // Reads a TEXT cell from Excel
-    // for col1, col2 ... col5
-    private String getString(Row row, int index) {
-        try {
-            return row.getCell(index).getStringCellValue();
-        }
-        catch (Exception e) {
-            return "";	// if cell is numeric or empty
-        }
-    }
 
-    
-    //EXPORT WORD
-    @Override
-    public void exportWord(List<ExcelRow> rows, OutputStream os) throws Exception {
-
-        if (rows == null || rows.isEmpty()) {
-            throw new Exception("No data available for export.");
-        }
-
-        XWPFDocument doc = new XWPFDocument();
-
-        for (ExcelRow r : rows) {
-        	
-        	// Header paragraph
-            XWPFParagraph p = doc.createParagraph();
-            XWPFRun run = p.createRun();
-            run.setBold(true);
-            run.setText("Entity ID: " + (r.getEntityId() == null ? "" : r.getEntityId()));
-
-            
-            // Data paragraph
-            XWPFParagraph p2 = doc.createParagraph();
-            XWPFRun r2 = p2.createRun();
-            r2.setText("COL1: " + safe(r.getCol1())); r2.addBreak();
-            r2.setText("COL2: " + safe(r.getCol2())); r2.addBreak();
-            r2.setText("COL3: " + safe(r.getCol3())); r2.addBreak();
-            r2.setText("COL4: " + safe(r.getCol4())); r2.addBreak();
-            r2.setText("COL5: " + safe(r.getCol5())); r2.addBreak();
-        }
-
-        
-        // Stream file to browser
-        doc.write(os);
-        doc.close();
-    }
-
-    
-    // IMPORT WORD
-    @Override
-    public List<ExcelRow> importWord(InputStream is) throws Exception {
-
-        List<ExcelRow> rows = new ArrayList<>();
-
-        XWPFDocument doc;
-        try {
-            doc = new XWPFDocument(is);			// Read file from memory
-        }
-        catch (Exception e) {
-            throw new Exception("Invalid Word file format.");
-        }
-
-        
-        ExcelRow current = null;
-
-        for (XWPFParagraph p : doc.getParagraphs()) {
-            String text = p.getText().trim();
-
-            
-            // Detect start of a new row
-            if (text.startsWith("Entity ID:")) {
-                if (current != null) rows.add(current);
-                current = new ExcelRow();
-                String idStr = text.replace("Entity ID:", "").trim();
-                if (!idStr.isEmpty()) {
-                    try {
-                        current.setEntityId(Long.parseLong(idStr));
-                    } catch (NumberFormatException ignored) {}
-                }
-            }
-            
-            // Map columns
-            else if (text.startsWith("COL1:")) current.setCol1(text.replace("COL1:", "").trim());
-            else if (text.startsWith("COL2:")) current.setCol2(text.replace("COL2:", "").trim());
-            else if (text.startsWith("COL3:")) current.setCol3(text.replace("COL3:", "").trim());
-            else if (text.startsWith("COL4:")) current.setCol4(text.replace("COL4:", "").trim());
-            else if (text.startsWith("COL5:")) current.setCol5(text.replace("COL5:", "").trim());
-        }
-
-        if (current != null) rows.add(current);
-
-        doc.close();
-        return rows;	// Controller converts these into NEW entities
-    }
-
-    private String safe(String s) {
-        return s == null ? "" : s;
-    }
 }

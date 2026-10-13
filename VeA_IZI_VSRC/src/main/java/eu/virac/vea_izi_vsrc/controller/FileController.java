@@ -1,9 +1,14 @@
 package eu.virac.vea_izi_vsrc.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +17,6 @@ import eu.virac.vea_izi_vsrc.model.*;
 import eu.virac.vea_izi_vsrc.model.fileConvert.ExcelRow;
 import eu.virac.vea_izi_vsrc.service.*;
 import eu.virac.vea_izi_vsrc.service.fileConvert.IFileService;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/admin")
@@ -43,14 +47,20 @@ public class FileController {
     // http://localhost:8080/admin/task/show/all/export/excel
     // http://localhost:8080/admin/user/show/all/export/excel
     @GetMapping("/{entity}/show/all/export/excel")
-    public void exportExcelAll(@PathVariable String entity, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> exportExcelAll(@PathVariable String entity) {
 
-        List<ExcelRow> rows = convertEntityToRows(entity);
+        try {
+            List<ExcelRow> rows = convertEntityToRows(entity);
+            byte[] fileBytes = fileService.exportExcel(rows);
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=" + entity + ".xlsx");
-
-        fileService.exportExcel(rows, response.getOutputStream());
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(200))
+                    .header("Content-Disposition", "attachment; filename=" + entity + "_all.xlsx")
+                    .body(fileBytes);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -67,14 +77,20 @@ public class FileController {
     // http://localhost:8080/admin/task/show/2/export/excel
     // http://localhost:8080/admin/user/show/1/export/excel
     @GetMapping("/{entity}/show/{id}/export/excel")
-    public void exportExcelSingle(@PathVariable String entity, @PathVariable long id, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> exportExcelSingle(@PathVariable String entity, @PathVariable long id) {
 
-        List<ExcelRow> rows = convertSingleEntityToRow(entity, id);
+        try {
+            List<ExcelRow> rows = convertSingleEntityToRows(entity, id);
+            byte[] fileBytes = fileService.exportExcel(rows);
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=" + entity + "_" + id + ".xlsx");
-
-        fileService.exportExcel(rows, response.getOutputStream());
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(200))
+                    .header("Content-Disposition", "attachment; filename=" + entity + "_" + id + ".xlsx")
+                    .body(fileBytes);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -91,14 +107,20 @@ public class FileController {
     // http://localhost:8080/admin/task/show/all/export/word
     // http://localhost:8080/admin/user/show/all/export/word
     @GetMapping("/{entity}/show/all/export/word")
-    public void exportWordAll(@PathVariable String entity, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> exportWordAll(@PathVariable String entity) {
 
-        List<ExcelRow> rows = convertEntityToRows(entity);
+        try {
+            List<ExcelRow> rows = convertEntityToRows(entity);
+            byte[] fileBytes = fileService.exportWord(rows);
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        response.setHeader("Content-Disposition", "attachment; filename=" + entity + ".docx");
-
-        fileService.exportWord(rows, response.getOutputStream());
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(200))
+                    .header("Content-Disposition", "attachment; filename=" + entity + "_all.docx")
+                    .body(fileBytes);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -115,14 +137,20 @@ public class FileController {
     // http://localhost:8080/admin/task/show/2/export/word
     // http://localhost:8080/admin/user/show/2/export/word
     @GetMapping("/{entity}/show/{id}/export/word")
-    public void exportWordSingle(@PathVariable String entity, @PathVariable long id, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> exportWordSingle(@PathVariable String entity, @PathVariable long id) {
 
-        List<ExcelRow> rows = convertSingleEntityToRow(entity, id);
+        try {
+            List<ExcelRow> rows = convertSingleEntityToRows(entity, id);
+            byte[] fileBytes = fileService.exportWord(rows);
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        response.setHeader("Content-Disposition", "attachment; filename=" + entity + "_" + id + ".docx");
-
-        fileService.exportWord(rows, response.getOutputStream());
+            return ResponseEntity
+                    .status(HttpStatusCode.valueOf(200))
+                    .header("Content-Disposition", "attachment; filename=" + entity + "_" + id + ".docx")
+                    .body(fileBytes);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -139,12 +167,17 @@ public class FileController {
     // http://localhost:8080/admin/task/show/all/import/excel
     // http://localhost:8080/admin/user/show/all/import/excel
     @PostMapping("/{entity}/show/all/import/excel")
-    public String importExcelAll(@PathVariable String entity, @RequestParam MultipartFile file) throws Exception {
+    public ResponseEntity<?> importExcelAll(@PathVariable String entity, @RequestParam MultipartFile file) {
 
-        List<ExcelRow> rows = fileService.importExcel(file.getInputStream());
-        saveRowsToEntity(entity, rows);
+        try {
+            List<ExcelRow> rows = fileService.importExcel(file.getBytes());
+            saveRowsToEntity(entity, rows);
 
-        return "redirect:/admin/" + entity + "/show/all";
+            return new ResponseEntity<String>("Excel import successful", HttpStatusCode.valueOf(200));
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -161,12 +194,18 @@ public class FileController {
     // http://localhost:8080/admin/task/show/2/import/excel
     // http://localhost:8080/admin/user/show/1/import/excel
     @PostMapping("/{entity}/show/{id}/import/excel")
-    public String importExcelSingle(@PathVariable String entity, @PathVariable long id, @RequestParam MultipartFile file) throws Exception {
+    public ResponseEntity<?> importExcelSingle(@PathVariable String entity, 
+    		@PathVariable long id, @RequestParam MultipartFile file) {
 
-        List<ExcelRow> rows = fileService.importExcel(file.getInputStream());
-        saveRowsToEntity(entity, rows);
+        try {
+            List<ExcelRow> rows = fileService.importExcel(file.getBytes());
+            saveRowsToEntity(entity, rows);
 
-        return "redirect:/admin/" + entity + "/show/all";
+            return new ResponseEntity<String>("Excel import successful", HttpStatusCode.valueOf(200));
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -182,12 +221,16 @@ public class FileController {
     // http://localhost:8080/admin/task/show/all/import/word
     // http://localhost:8080/admin/user/show/all/import/word
     @PostMapping("/{entity}/show/all/import/word")
-    public String importWordAll(@PathVariable String entity, @RequestParam MultipartFile file) throws Exception {
+    public ResponseEntity<?> importWordAll(@PathVariable String entity, @RequestParam MultipartFile file) {
+        try {
+            List<ExcelRow> rows = fileService.importWord(file.getBytes());
+            saveRowsToEntity(entity, rows);
 
-        List<ExcelRow> rows = fileService.importWord(file.getInputStream());
-        saveRowsToEntity(entity, rows);
-
-        return "redirect:/admin/" + entity + "/show/all";
+            return new ResponseEntity<String>("Word import successful", HttpStatusCode.valueOf(200));
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
 
@@ -203,12 +246,18 @@ public class FileController {
     // http://localhost:8080/admin/task/show/1/import/word
     // http://localhost:8080/admin/user/show/3/import/word
     @PostMapping("/{entity}/show/{id}/import/word")
-    public String importWordSingle(@PathVariable String entity, @PathVariable long id, @RequestParam MultipartFile file) throws Exception {
+    public ResponseEntity<?> importWordSingle(@PathVariable String entity,  
+    		@PathVariable long id, @RequestParam MultipartFile file) {
 
-        List<ExcelRow> rows = fileService.importWord(file.getInputStream());
-        saveRowsToEntity(entity, rows);
+        try {
+            List<ExcelRow> rows = fileService.importWord(file.getBytes());
+            saveRowsToEntity(entity, rows);
 
-        return "redirect:/admin/" + entity + "/show/all";
+            return new ResponseEntity<String>("Word import successful", HttpStatusCode.valueOf(200));
+        }
+        catch (Exception e) {
+            return new ResponseEntity<String>(e.getMessage(), HttpStatusCode.valueOf(409));
+        }
     }
 
     
@@ -224,79 +273,78 @@ public class FileController {
     // for:
     // .../admin/{entity}/show/{id}/export/excel
     // .../admin/{entity}/show/{id}/export/word
-    private List<ExcelRow> convertSingleEntityToRow(String entity, long id) throws Exception {
+    private List<ExcelRow> convertSingleEntityToRows(String entity, long id) throws Exception {
 
         List<ExcelRow> rows = new ArrayList<>();
-        ExcelRow r = new ExcelRow();
 
         switch (entity) {
 
+            case "user":
+                User u = userService.getUserById(id);
+                rows.add(new ExcelRow("user", u.getIdUser(), "Name", u.getName()));
+                rows.add(new ExcelRow("user", u.getIdUser(), "Surname", u.getSurname()));
+                rows.add(new ExcelRow("user", u.getIdUser(), "Email", u.getEmail()));
+                rows.add(new ExcelRow("user", u.getIdUser(), "Role", u.getRole()));
+                rows.add(new ExcelRow("user", u.getIdUser(), "Department",
+                        u.getDepartment() == null ? "" : String.valueOf(u.getDepartment().getIdDepartment())));
+                break;
+
             case "category":
                 Category c = categoryService.getCategoryById(id);
-                r.setEntityId(c.getIdCategory());
-                r.setCol1(c.getName());
-                r.setCol2(c.getDescription());
+                rows.add(new ExcelRow("category", c.getIdCategory(), "Name", c.getName()));
+                rows.add(new ExcelRow("category", c.getIdCategory(), "Description", c.getDescription()));
                 break;
 
             case "subcategory":
                 SubCategory s = subCategoryService.getSubCategoryById(id);
-                r.setEntityId(s.getIdSubcategory());
-                r.setCol1(s.getTitle());
-                r.setCol2(s.getDescription());
+                rows.add(new ExcelRow("subcategory", s.getIdSubcategory(), "Title", s.getTitle()));
+                rows.add(new ExcelRow("subcategory", s.getIdSubcategory(), "Description", s.getDescription()));
                 break;
 
             case "department":
                 Department d = departmentService.getDepartmentById(id);
-                r.setEntityId(d.getIdDepartment());
-                r.setCol1(d.getName());
-                r.setCol2(d.getDescription());
-                r.setCol3(d.getGoals());
+                rows.add(new ExcelRow("department", d.getIdDepartment(), "Name", d.getName()));
+                rows.add(new ExcelRow("department", d.getIdDepartment(), "Description", d.getDescription()));
+                rows.add(new ExcelRow("department", d.getIdDepartment(), "Goals", d.getGoals()));
                 break;
 
             case "departmenthead":
                 DepartmentHead dh = departmentHeadService.getDepartmentHeadById(id);
-                r.setEntityId(dh.getDepartmentHeadId());
-                r.setCol1(dh.getUser().getName());
-                r.setCol2(dh.getDepartment().getName());
-                r.setCol3(String.valueOf(dh.getStartingDate()));
-                r.setCol4(String.valueOf(dh.getEndingDate()));
+                rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Starting Date", dh.getStartingDate().toString()));
+                rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Ending Date", dh.getEndingDate().toString()));
+                rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Department",
+                        dh.getDepartment() == null ? "" : String.valueOf(dh.getDepartment().getIdDepartment())));
+                rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "User",
+                        dh.getUser() == null ? "" : String.valueOf(dh.getUser().getIdUser())));
                 break;
 
             case "kpi":
                 KPI k = kpiService.getKPIById(id);
-                r.setEntityId(k.getIdKPI());
-                r.setCol1(k.getTitle());
-                r.setCol2(k.getDescription());
-                r.setCol3(k.getStatus().name());
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Title", k.getTitle()));
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Description", k.getDescription()));
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Status", k.getStatus().name()));
                 break;
 
             case "project":
                 Project p = projectService.getProjectById(id);
-                r.setEntityId(p.getIdProject());
-                r.setCol1(p.getTitle());
-                r.setCol2(p.getDescription());
+                rows.add(new ExcelRow("project", p.getIdProject(), "Title", p.getTitle()));
+                rows.add(new ExcelRow("project", p.getIdProject(), "Description", p.getDescription()));
                 break;
 
             case "task":
                 Task t = taskService.getTaskById(id);
-                r.setEntityId(t.getIdTask());
-                r.setCol1(t.getTitle());
-                r.setCol2(t.getDescription());
-                r.setCol3(t.getStatus().name());
+                rows.add(new ExcelRow("task", t.getIdTask(), "Title", t.getTitle()));
+                rows.add(new ExcelRow("task", t.getIdTask(), "Description", t.getDescription()));
+                rows.add(new ExcelRow("task", t.getIdTask(), "Status", t.getStatus().name()));
                 break;
 
-            case "user":
-                User u = userService.getUserById(id);
-                r.setEntityId(u.getIdUser());
-                r.setCol1(u.getName());
-                r.setCol2(u.getEmail());
-                r.setCol3(u.getDepartment().getName());
-                break;
+            default:
+                throw new Exception("Unknown entity: " + entity);
         }
 
-        rows.add(r);
         return rows;
     }
+
 
 
     // ENTITY -> ROWS (ALL)
@@ -309,95 +357,102 @@ public class FileController {
 
         switch (entity) {
 
-            case "category":
-                for (Category c : categoryService.getAllCategories()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(c.getIdCategory());
-                    r.setCol1(c.getName());
-                    r.setCol2(c.getDescription());
-                    rows.add(r);
-                }
-                break;
-
-            case "subcategory":
-                for (SubCategory s : subCategoryService.getAllSubCategories()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(s.getIdSubcategory());
-                    r.setCol1(s.getTitle());
-                    r.setCol2(s.getDescription());
-                    rows.add(r);
-                }
-                break;
-
-            case "department":
-                for (Department d : departmentService.getAllDepartments()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(d.getIdDepartment());
-                    r.setCol1(d.getName());
-                    r.setCol2(d.getDescription());
-                    r.setCol3(d.getGoals());
-                    rows.add(r);
-                }
-                break;
-
-            case "departmenthead":
-                for (DepartmentHead dh : departmentHeadService.getAllDepartmentHeads()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(dh.getDepartmentHeadId());
-                    r.setCol1(dh.getUser().getName());
-                    r.setCol2(dh.getDepartment().getName());
-                    r.setCol3(String.valueOf(dh.getStartingDate()));
-                    r.setCol4(String.valueOf(dh.getEndingDate()));
-                    rows.add(r);
-                }
-                break;
-
-            case "kpi":
-                for (KPI k : kpiService.getAllKPIs()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(k.getIdKPI());
-                    r.setCol1(k.getTitle());
-                    r.setCol2(k.getDescription());
-                    r.setCol3(k.getStatus().name());
-                    rows.add(r);
-                }
-                break;
-
-            case "project":
-                for (Project p : projectService.getAllProjects()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(p.getIdProject());
-                    r.setCol1(p.getTitle());
-                    r.setCol2(p.getDescription());
-                    rows.add(r);
-                }
-                break;
-
-            case "task":
-                for (Task t : taskService.getAllTasks()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(t.getIdTask());
-                    r.setCol1(t.getTitle());
-                    r.setCol2(t.getDescription());
-                    r.setCol3(t.getStatus().name());
-                    rows.add(r);
-                }
-                break;
-
+            // USER
             case "user":
                 for (User u : userService.getAllUsers()) {
-                    ExcelRow r = new ExcelRow();
-                    r.setEntityId(u.getIdUser());
-                    r.setCol1(u.getName());
-                    r.setCol2(u.getEmail());
-                    r.setCol3(u.getDepartment().getName());
-                    rows.add(r);
+                    rows.add(new ExcelRow("user", u.getIdUser(), "Name", u.getName()));
+                    rows.add(new ExcelRow("user", u.getIdUser(), "Surname", u.getSurname()));
+                    rows.add(new ExcelRow("user", u.getIdUser(), "Email", u.getEmail()));
+                    rows.add(new ExcelRow("user", u.getIdUser(), "Role", u.getRole()));
+                    rows.add(new ExcelRow("user", u.getIdUser(), "Department",
+                            u.getDepartment() == null ? "" : String.valueOf(u.getDepartment().getIdDepartment())));
                 }
                 break;
+
+
+                
+            // CATEGORY
+            case "category":
+                for (Category c : categoryService.getAllCategories()) {
+                    rows.add(new ExcelRow("category", c.getIdCategory(), "Name", c.getName()));
+                    rows.add(new ExcelRow("category", c.getIdCategory(), "Description", c.getDescription()));
+                }
+                break;
+
+
+            // SUBCATEGORY
+            case "subcategory":
+                for (SubCategory s : subCategoryService.getAllSubCategories()) {
+                    rows.add(new ExcelRow("subcategory", s.getIdSubcategory(), "Title", s.getTitle()));
+                    rows.add(new ExcelRow("subcategory", s.getIdSubcategory(), "Description", s.getDescription()));
+                }
+                break;
+
+
+                
+            // DEPARTMENT
+            case "department":
+                for (Department d : departmentService.getAllDepartments()) {
+                    rows.add(new ExcelRow("department", d.getIdDepartment(), "Name", d.getName()));
+                    rows.add(new ExcelRow("department", d.getIdDepartment(), "Description", d.getDescription()));
+                    rows.add(new ExcelRow("department", d.getIdDepartment(), "Goals", d.getGoals()));
+                }
+                break;
+
+
+                
+            // DEPARTMENT HEAD
+            case "departmenthead":
+                for (DepartmentHead dh : departmentHeadService.getAllDepartmentHeads()) {
+                    rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Starting Date", dh.getStartingDate().toString()));
+                    rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Ending Date", dh.getEndingDate().toString()));
+                    rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "Department",
+                            dh.getDepartment() == null ? "" : String.valueOf(dh.getDepartment().getIdDepartment())));
+                    rows.add(new ExcelRow("departmenthead", dh.getDepartmentHeadId(), "User",
+                            dh.getUser() == null ? "" : String.valueOf(dh.getUser().getIdUser())));
+                }
+                break;
+
+
+                
+            // KPI
+            case "kpi":
+                for (KPI k : kpiService.getAllKPIs()) {
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Title", k.getTitle()));
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Description", k.getDescription()));
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Status", k.getStatus().name()));
+                }
+                break;
+
+
+            // PROJECT
+            case "project":
+                for (Project p : projectService.getAllProjects()) {
+                    rows.add(new ExcelRow("project", p.getIdProject(), "Title", p.getTitle()));
+                    rows.add(new ExcelRow("project", p.getIdProject(), "Description", p.getDescription()));
+                }
+                break;
+
+
+                
+            // TASK
+            case "task":
+                for (Task t : taskService.getAllTasks()) {
+                    rows.add(new ExcelRow("task", t.getIdTask(), "Title", t.getTitle()));
+                    rows.add(new ExcelRow("task", t.getIdTask(), "Description", t.getDescription()));
+                    rows.add(new ExcelRow("task", t.getIdTask(), "Status", t.getStatus().name()));
+                }
+                break;
+
+            default:
+                throw new Exception("Unknown entity: " + entity);
+                
+                
         }
 
         return rows;
     }
+
 
 
     // ROWS -> ENTITY (CREATE NEW)
@@ -406,89 +461,238 @@ public class FileController {
 	// .../admin/{entity}/show/all/import/word
 	// .../admin/{entity}/show/{id}/import/excel
 	// .../admin/{entity}/show/{id}/import/word
-    private void saveRowsToEntity(String entity, List<ExcelRow> rows) throws Exception {
+    
+    // Converts imported ExcelRow list into real entity objects and saves them.
+    // Rows are grouped by entityId so each object receives all its fields before saving.
+    
+	// Converts imported ExcelRow list into real entity objects and saves them.
+	// ID is ignored because database generates it automatically.
+	private void saveRowsToEntity(String entity, List<ExcelRow> rows) throws Exception {
+	
+		if (rows == null || rows.isEmpty()) {
+			throw new Exception("File contains no rows. Cannot import.");
+	    }
+	
+	    // Group rows by entityId, but DO NOT use entityId for saving.
+	    // Each group represents one new object to create.
+	    Map<Long, List<ExcelRow>> grouped = new LinkedHashMap<>();
+	    for (ExcelRow r : rows) {
+	        grouped.computeIfAbsent(r.getEntityId(), k -> new ArrayList<>()).add(r);
+	    }
+	    
+	    
+	
+	    switch (entity) {
 
-        switch (entity) {
 
-            case "category":
-                for (ExcelRow r : rows) {
-                    Category c = new Category();
-                    c.setName(r.getCol1());
-                    c.setDescription(r.getCol2());
-                    categoryService.createNewCategory(c);
-                }
-                break;
+			// CATEGORY
+			case "category":
+	            for (var entry : grouped.entrySet()) {
+	
+	                Category c = new Category(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Name"))
+	                    	c.setName(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        c.setDescription(r.getColumnValue());
+	                }
+	
+	                categoryService.createNewCategory(c);
+	            }
+	            break;
+	
 
-            case "subcategory":
-                for (ExcelRow r : rows) {
-                    SubCategory s = new SubCategory();
-                    s.setTitle(r.getCol1());
-                    s.setDescription(r.getCol2());
-                    subCategoryService.createNewSubCategory(s);
-                }
-                break;
 
-            case "department":
-                for (ExcelRow r : rows) {
-                    Department d = new Department();
-                    d.setName(r.getCol1());
-                    d.setDescription(r.getCol2());
-                    d.setGoals(r.getCol3());
-                    departmentService.createNewDepartment(d);
-                }
-                break;
+	        // SUBCATEGORY
+	        case "subcategory":
+	            for (var entry : grouped.entrySet()) {
+	
+	                SubCategory s = new SubCategory(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Title"))
+	                    	s.setTitle(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        s.setDescription(r.getColumnValue());
+	                }
+	
+	                subCategoryService.createNewSubCategory(s);
+	            }
+	            break;
+	
 
-            case "departmenthead":
-                for (ExcelRow r : rows) {
-                    DepartmentHead dh = new DepartmentHead();
-                    dh.setStartingDate(java.time.LocalDate.parse(r.getCol3()));
-                    dh.setEndingDate(java.time.LocalDate.parse(r.getCol4()));
-                    dh.setDepartment(departmentService.getDepartmentById(Long.parseLong(r.getCol2())));
-                    dh.setUser(userService.getUserById(Long.parseLong(r.getCol1())));
-                    departmentHeadService.createNewDepartmentHead(dh);
-                }
-                break;
 
-            case "kpi":
-                for (ExcelRow r : rows) {
-                    KPI k = new KPI();
-                    k.setTitle(r.getCol1());
-                    k.setDescription(r.getCol2());
-                    k.setStatus(eu.virac.vea_izi_vsrc.model.Enums.KPIStatus.valueOf(r.getCol3()));
-                    kpiService.createNewKPI(k);
-                }
-                break;
+	            
+	        // DEPARTMENT
+	        case "department":
+	            for (var entry : grouped.entrySet()) {
+	
+	                Department d = new Department(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Name"))
+	                        d.setName(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        d.setDescription(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Goals"))
+	                        d.setGoals(r.getColumnValue());
+	                }
+	
+	                departmentService.createNewDepartment(d);
+	            }
+	            break;
+	
+	            
+	            
+	            
+            // DEPARTMENT HEAD
+	        case "departmenthead":
+	        	for (var entry : grouped.entrySet()) {
+	
+	                DepartmentHead dh = new DepartmentHead(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Starting Date"))
+	                        dh.setStartingDate(LocalDate.parse(r.getColumnValue()));
+	
+	                    if (r.getColumnName().equals("Ending Date"))
+	                        dh.setEndingDate(LocalDate.parse(r.getColumnValue()));
+	
+	                    if (r.getColumnName().equals("Department")) {
+	                        long depId = Long.parseLong(r.getColumnValue());
+	                        dh.setDepartment(departmentService.getDepartmentById(depId));
+	                    }
+	
+	                    if (r.getColumnName().equals("User")) {
+	                        long userId = Long.parseLong(r.getColumnValue());
+	                        dh.setUser(userService.getUserById(userId));
+	                     }
+	                 }
+	
+	                 departmentHeadService.createNewDepartmentHead(dh);
+	             }
+	             break;
+	
+	             
+	
+	        // KPI
+	        case "kpi":
+	            for (var entry : grouped.entrySet()) {
+	
+	                KPI k = new KPI(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Title"))
+	                        k.setTitle(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        k.setDescription(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Status"))
+	                        k.setStatus(eu.virac.vea_izi_vsrc.model.Enums.KPIStatus.valueOf(r.getColumnValue()));
+	                }
+	
+	                kpiService.createNewKPI(k);
+	            }
+	            break;
+	
 
-            case "project":
-                for (ExcelRow r : rows) {
-                    Project p = new Project();
-                    p.setTitle(r.getCol1());
-                    p.setDescription(r.getCol2());
-                    projectService.createNewProject(p);
-                }
-                break;
 
-            case "task":
-                for (ExcelRow r : rows) {
-                    Task t = new Task();
-                    t.setTitle(r.getCol1());
-                    t.setDescription(r.getCol2());
-                    t.setStatus(eu.virac.vea_izi_vsrc.model.Enums.TaskStatus.valueOf(r.getCol3()));
-                    taskService.createNewTask(t);
-                }
-                break;
+	            
+	        // PROJECT
+	        case "project":
+	            for (var entry : grouped.entrySet()) {
+	
+	                Project p = new Project(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Title"))
+	                        p.setTitle(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        p.setDescription(r.getColumnValue());
+	                }
+	
+	                projectService.createNewProject(p);
+	            }
+	            break;
+	
 
-            case "user":
-                for (ExcelRow r : rows) {
-                    User u = new User();
-                    u.setName(r.getCol1());
-                    u.setEmail(r.getCol2());
-                    u.setDepartment(departmentService.getDepartmentById(
-                            Long.parseLong(r.getCol3())
-                    ));
-                    userService.createNewUser(u);
-                }
-                break;
-        }
-    }
+
+	            
+	        // TASK
+	        case "task":
+	            for (var entry : grouped.entrySet()) {
+	
+	                Task t = new Task(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Title"))
+	                        t.setTitle(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Description"))
+	                        t.setDescription(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Status"))
+	                        t.setStatus(eu.virac.vea_izi_vsrc.model.Enums.TaskStatus.valueOf(r.getColumnValue()));
+	                }
+	
+	                taskService.createNewTask(t);
+	            }
+	            break;
+	
+
+
+	            
+	        // USER
+	        case "user":
+	            for (var entry : grouped.entrySet()) {
+	
+	                User u = new User(); // ID auto-generated
+	
+	                for (ExcelRow r : entry.getValue()) {
+	
+	                    if (r.getColumnName().equals("Name"))
+	                        u.setName(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Surname"))
+	                        u.setSurname(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Email"))
+	                        u.setEmail(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Role"))
+	                        u.setRole(r.getColumnValue());
+	
+	                    if (r.getColumnName().equals("Department")) {
+	                        long depId = Long.parseLong(r.getColumnValue());
+	                        u.setDepartment(departmentService.getDepartmentById(depId));
+	                    }
+	                }
+	
+	                userService.createNewUser(u);
+	            }
+	            break;
+	
+	
+	        default:
+	            throw new Exception("Unknown entity type: " + entity);
+	    }
+	}
+
+
+
+    
 }

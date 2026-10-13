@@ -60,22 +60,7 @@
 
 <br>
 
-<!-- IMPORT BUTTONS -->
-<div style="width:60%;margin:0 auto;display:flex;gap:20px;justify-content:center;">
 
-    <form th:action="@{'/admin/project/show/' + ${package.idProject} + '/import/excel'}"
-          method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".xlsx" required>
-        <button class="btn" type="submit">Import Excel</button>
-    </form>
-
-    <form th:action="@{'/admin/project/show/' + ${package.idProject} + '/import/word'}"
-          method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".docx" required>
-        <button class="btn" type="submit">Import Word</button>
-    </form>
-
-</div>
 
 
 <div class="footer">
