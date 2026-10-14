@@ -44,7 +44,7 @@ public class VeAIziVsrcApplication {
 //                Department heads
 
 //                Name, Surname, email, role, department
-                User u1 = new User("John", "Doe", "test@test.com", "DepartmentHead", d1);
+                User u1 = new User("John", "Doe", "normundsbrizs@gmail.com", "DepartmentHead", d1);
                 User u2 = new User("Mary", "Sue", "test2@test.com", "DepartmentHead", d2);
                 User u3 = new User("Bill", "Brown", "test3@test.com", "DepartmentHead", d3);
 
