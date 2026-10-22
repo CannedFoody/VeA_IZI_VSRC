@@ -55,7 +55,7 @@ public class FileController {
 
             return ResponseEntity
                     .status(HttpStatusCode.valueOf(200))
-                    .header("Content-Disposition", "attachment; filename=" + entity + "_all.xlsx")
+                    .header("Content-Disposition", "attachment; filename=" + entity + "_all.xlsx")	//headerName , headerValues
                     .body(fileBytes);
         }
         catch (Exception e) {

@@ -30,9 +30,10 @@ public class FileServiceImpl implements IFileService {
             throw new Exception("Nav datu eksportam");
         }
 
-        Workbook wb = new XSSFWorkbook();
-        Sheet sheet = wb.createSheet("data");
+        Workbook wb = new XSSFWorkbook();	//create a new workbook
+        Sheet sheet = wb.createSheet("data");	//create a sheet
 
+        //data to write
         Map<Long, List<ExcelRow>> grouped = groupByEntity(rows);
         List<String> headers = collectHeaders(rows);
 
@@ -240,6 +241,7 @@ public class FileServiceImpl implements IFileService {
         return map;
     }
 
+    
     private List<String> collectHeaders(List<ExcelRow> rows) {
         List<String> headers = new ArrayList<>();
         for(ExcelRow r : rows) {
@@ -250,6 +252,7 @@ public class FileServiceImpl implements IFileService {
         return headers;
     }
 
+    
     private String findValue(List<ExcelRow> rows, String columnName) {
         for(ExcelRow r : rows) {
             if(columnName.equals(r.getColumnName())) {
@@ -259,16 +262,26 @@ public class FileServiceImpl implements IFileService {
         return "";
     }
 
+    
     private String getCellValue(Cell cell) {
-        if(cell == null) return "";
-        return switch(cell.getCellType()) {
-            case STRING -> cell.getStringCellValue();
-            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
-            default -> "";
-        };
+        if(cell == null) {
+        	return "";
+        }
+        
+        switch(cell.getCellType()) {
+            case STRING : 
+            	return cell.getStringCellValue();
+            case NUMERIC :
+            	return String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN :
+            	return String.valueOf(cell.getBooleanCellValue());
+            default :
+            	return "";
+        }
     }
 
+    
+    
     private Long parseLong(String s) {
         try {
             return Long.parseLong(s.trim());
