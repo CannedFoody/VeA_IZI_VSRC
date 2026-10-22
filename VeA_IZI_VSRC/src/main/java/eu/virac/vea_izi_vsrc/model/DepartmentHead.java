@@ -6,15 +6,22 @@ import lombok.*;
 import eu.virac.vea_izi_vsrc.model.User;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@EntityListeners(AuditingEntityListener.class)
 @Setter
 @Getter
 @NoArgsConstructor
 @ToString
 @Table
 @Entity
+@Audited
 public class DepartmentHead {
 
     @Id
@@ -22,6 +29,14 @@ public class DepartmentHead {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter(AccessLevel.NONE)
     private Long departmentHeadId;
+    
+	@Column(name="created_date", nullable = false, updatable = false)
+	@CreatedDate
+	private LocalDateTime createdDate;
+	
+	@Column(name="last_modified_date")
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
 
     @Column(name = "startingDate")
     @NotNull

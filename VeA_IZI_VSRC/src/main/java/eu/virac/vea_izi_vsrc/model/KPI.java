@@ -6,24 +6,39 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+@EntityListeners(AuditingEntityListener.class)
 @Setter
 @Getter
 @NoArgsConstructor
 @ToString
 @Entity
 @Table
+@Audited
 public class KPI {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "idKPI")
     @Setter(AccessLevel.NONE)
     private long IdKPI;
+    
+	@Column(name="created_date", nullable = false, updatable = false)
+	@CreatedDate
+	private LocalDateTime createdDate;
+	
+	@Column(name="last_modified_date")
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
 
     @Column(name = "creationDate")
     @NotNull

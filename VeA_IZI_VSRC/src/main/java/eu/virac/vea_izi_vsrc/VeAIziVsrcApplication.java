@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import eu.virac.vea_izi_vsrc.model.*;
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class VeAIziVsrcApplication {
 
     public static void main(String[] args) {

@@ -1,7 +1,15 @@
 package eu.virac.vea_izi_vsrc.model;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,12 +23,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 @Table(name = "Department")
 @Entity
+@Audited
 public class Department {
 	
 	@Column(name = "IdDepartment")
@@ -28,6 +38,14 @@ public class Department {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Setter(value = AccessLevel.NONE)
 	private long idDepartment;
+	
+	@Column(name="created_date", nullable = false, updatable = false)
+	@CreatedDate
+	private LocalDateTime createdDate;
+	
+	@Column(name="last_modified_date")
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
 	
 	@Column(name = "Name", unique = true)
 	@NotNull
