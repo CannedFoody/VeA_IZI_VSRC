@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import eu.virac.vea_izi_vsrc.model.Department;
@@ -26,6 +27,18 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		if (departmentHead.getStartingDate() == null
 				|| departmentHead.getDepartment() == null || departmentHead.getUser() == null) {
 			throw new Exception("One or more of the DepartmentHead fields are empty...");
+		}
+
+		if(departmentHead.getStartingDate().isAfter(departmentHead.getEndingDate())){
+			throw new Exception("Starting date cannot be after the ending date...");
+		}
+
+		if(departmentHead.getStartingDate().isBefore(LocalDate.of(LocalDate.now().getYear() - 1, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()))){
+			throw new Exception("Starting date cannot be before 1 year from the current date...");
+		}
+
+		if(departmentHead.getEndingDate().isAfter(LocalDate.of(LocalDate.now().getYear() + 10, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()))){
+			throw new Exception("Ending date cannot be after 10 years from the current date...");
 		}
 		
 		return departmentHeadRepo.save(departmentHead);
@@ -68,6 +81,16 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		}
 		if (startingDate == null || department == null || user == null) {
 			throw new Exception("Incorrect DepartmentHead input data...");
+		}
+
+		if(startingDate.isAfter(endingDate)){
+			throw new Exception("Starting date cannot be after ending date...");
+		}
+		if(startingDate.getYear() < getDepartmentHeadById(departmentHeadId).getStartingDate().getYear() - 10) {
+			throw new Exception("Starting date cannot be younger than 10 years from the current starting date...");
+		}
+		if(endingDate.getYear() > getDepartmentHeadById(departmentHeadId).getEndingDate().getYear() + 10){
+			throw new Exception("Ending date cannot be older than 10 years from the current starting date...");
 		}
 		
 		DepartmentHead department_head_to_update = departmentHeadRepo.findById(departmentHeadId).get();

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import eu.virac.vea_izi_vsrc.model.Category;
@@ -27,6 +28,18 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (kpi.getCreationDate() == null || kpi.getTitle().isEmpty() || kpi.getDescription().isEmpty() 
 				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null || kpi.getOverlooker() == null) {
 			throw new Exception("One or more of the KPI fields are empty...");
+		}
+
+		if(kpi.getCreationDate().isAfter(kpi.getDeadline())){
+			throw new Exception("Creation date cannot be after the deadline...");
+		}
+
+		if(kpi.getCreationDate().isBefore(LocalDate.of(LocalDate.now().getYear() - 1, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()))){
+			throw new Exception("Creation date cannot be younger than a year...");
+		}
+
+		if(kpi.getDeadline().isAfter(LocalDate.of(LocalDate.now().getYear() + 5, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()))){
+			throw new Exception("Deadline cannot be older than 5 years...");
 		}
 		
 		return kpiRepo.save(kpi);
@@ -71,7 +84,19 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 				|| creator == null || overlooker == null) {
 			throw new Exception("Incorrect KPI input data...");
 		}
-		
+
+		if(creationDate.isAfter(deadline)){
+			throw new Exception("Creation date cannot be after the deadline...");
+		}
+
+		if(creationDate.getYear() < getKPIById(idKPI).getCreationDate().getYear() - 1){
+			throw new Exception("Creation date cannot be more than a year earlier than the current date...");
+		}
+
+		if(deadline.getYear() < getKPIById(idKPI).getDeadline().getYear() + 1){
+			throw new Exception("Deadline cannot be older than a year than the current deadline...");
+		}
+
 		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
 		
 		if(!kpi_to_update.getCreationDate().equals(creationDate)){
