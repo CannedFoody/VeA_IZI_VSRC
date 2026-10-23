@@ -105,7 +105,7 @@ public class VeAIziVsrcApplication {
                 SecAuthority auth1 = new SecAuthority("ADMIN");
                 SecAuthority auth2 = new SecAuthority("DHEAD");
                 SecAuthority auth3 = new SecAuthority("WORKER");
-                auth_repo.saveAll(Arrays.asList(auth1, auth2));
+                auth_repo.saveAll(Arrays.asList(auth1, auth2, auth3));
                 
                 PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
                 

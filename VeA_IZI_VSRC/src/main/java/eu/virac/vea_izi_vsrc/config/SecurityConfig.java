@@ -40,7 +40,9 @@ public class SecurityConfig {
 	public SecurityFilterChain httpPermissions(HttpSecurity http) {
 		http.authorizeHttpRequests(
 				auth->auth
-				.requestMatchers("/admin/kpi/show/all").permitAll());
+				.requestMatchers("/admin/kpi/show/all").permitAll()
+				.requestMatchers("/admin/kpi/add").hasAnyAuthority("ADMIN", "DHEAD")
+				.requestMatchers("/admin/department/add").hasAuthority("ADMIN"));
 		http.formLogin(auth->auth.permitAll());
 		
 		return http.build();
