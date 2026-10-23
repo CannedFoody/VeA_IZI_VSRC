@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,8 @@ public class Department {
 	@Column(name = "Description", unique = true)
 	@NotNull
 	@NotEmpty
-	@Pattern(regexp = "[A-Ža-ž0-9 ]{3,50}")
+	@Pattern(regexp = "[A-Ža-ž0-9.,() -]{3,700}")
+	@Size(min = 3, max = 700)
 	private String description;
 	
 	@Column(name = "Goals", unique = true)
