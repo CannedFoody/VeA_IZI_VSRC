@@ -17,11 +17,11 @@ public class CRUDCategoryServiceImpl implements ICRUDCategoryService {
 	
 	@Override
 	public Category createNewCategory(Category category) throws Exception {
-		if (category == null) {
-			throw new Exception("Passed category object is null...");
-		}
 		if (category.getName().isEmpty() || category.getDescription().isEmpty()) {
 			throw new Exception("Category name or description field is empty...");
+		}
+		if (category == null) {
+			throw new Exception("Passed category object is null...");
 		}
 		
 		return categoryRepo.save(category);
@@ -40,12 +40,14 @@ public class CRUDCategoryServiceImpl implements ICRUDCategoryService {
 
 	@Override
 	public Category getCategoryById(long idCategory) throws Exception {
-		if (idCategory < 1) {
-			throw new Exception("Invalid category ID passed...");
-		}
 		if (categoryRepo.count() == 0) {
 			throw new Exception("Category repo is empty...");
 		}
+
+		if (idCategory < 1) {
+			throw new Exception("Invalid category ID passed...");
+		}
+
 		if (!categoryRepo.existsById(idCategory)) {
 			throw new Exception("No category exists by that ID...");
 		}
@@ -55,12 +57,18 @@ public class CRUDCategoryServiceImpl implements ICRUDCategoryService {
 
 	@Override
 	public Category updateCategory(long idCategory, String name, String description) throws Exception {
+		if(categoryRepo.count() == 0){
+			throw new Exception("No catagories exist to update...");
+		}
+
 		if (idCategory < 1) {
 			throw new Exception("Invalid category ID passed...");
 		}
+
 		if (!categoryRepo.existsById(idCategory)) {
 			throw new Exception("No category exists by that ID...");
 		}
+
 		if(name == null || description == null){
             throw new Exception("Incorrect category input data...");
         }
@@ -79,10 +87,14 @@ public class CRUDCategoryServiceImpl implements ICRUDCategoryService {
 
 	@Override
 	public void deleteCategory(long idCategory) throws Exception {
+		if(categoryRepo.count() == 0){
+			throw new Exception("There are no categories to delete...");
+		}
+
 		if (idCategory < 1) {
 			throw new Exception("Invalid category ID passed...");
 		}
-		
+
 		if (categoryRepo.existsById(idCategory)) {
 			categoryRepo.deleteById(idCategory);
 		}

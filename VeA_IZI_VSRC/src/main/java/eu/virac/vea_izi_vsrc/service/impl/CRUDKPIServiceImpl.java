@@ -58,12 +58,14 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 
 	@Override
 	public KPI getKPIById(long idKPI) throws Exception {
-		if (idKPI < 1) {
-			throw new Exception("Invalid KPI ID passed...");
-		}
 		if (kpiRepo.count() == 0) {
 			throw new Exception("KPI repo is empty...");
 		}
+
+		if (idKPI < 1) {
+			throw new Exception("Invalid KPI ID passed...");
+		}
+
 		if (!kpiRepo.existsById(idKPI)) {
 			throw new Exception("No KPI exists by that ID...");
 		}
@@ -74,6 +76,10 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 	@Override
 	public KPI updateKPI(long idKPI, LocalDate creationDate, LocalDate deadline, String title, String description, KPIStatus status,
 			Category category, User creator, User overlooker) throws Exception {
+		if(kpiRepo.count() == 0){
+			throw new Exception("No KPI's to update...");
+		}
+
 		if (idKPI < 1) {
 			throw new Exception("Invalid KPI ID passed...");
 		}
@@ -131,6 +137,10 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 
 	@Override
 	public void deleteKPI(long idKPI) throws Exception {
+		if(kpiRepo.count() == 0){
+			throw new Exception("No KPI's to delete...");
+		}
+
 		if (idKPI < 1) {
 			throw new Exception("Invalid KPI ID passed...");
 		}

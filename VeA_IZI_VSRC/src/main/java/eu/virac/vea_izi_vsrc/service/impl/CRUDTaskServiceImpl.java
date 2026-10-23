@@ -57,12 +57,12 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 
     @Override
     public Task getTaskById(long idTask) throws Exception {
-        if (idTask < 1) {
-            throw new Exception("Invalid Task ID passed...");
-        }
-
         if(task_repo.count() == 0){
             throw new Exception("Task repo is empty...");
+        }
+
+        if (idTask < 1) {
+            throw new Exception("Invalid Task ID passed...");
         }
 
         if(!task_repo.existsById(idTask)){
@@ -74,12 +74,15 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 
     @Override
     public Task updateTask(long idTask, String title, String description, TaskStatus status, KPI kpi, SubCategory sub_category) throws Exception {
-        if(!task_repo.existsById(idTask)){
-            throw new Exception("No department with that ID exists...");
+        if(task_repo.count() == 0){
+            throw new Exception("No tasks exist to update...");
         }
-
         if(idTask < 1){
             throw new Exception("Incorrect department ID passed...");
+        }
+
+        if(!task_repo.existsById(idTask)){
+            throw new Exception("No department with that ID exists...");
         }
 
         if(title.isEmpty() || description.isEmpty() || status == null || kpi == null || sub_category == null){
@@ -117,6 +120,10 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 
     @Override
     public void deleteTask(long idTask) throws Exception {
+        if(task_repo.count() == 0){
+            throw new Exception("No tasks exist to delete...");
+        }
+
         if(idTask < 1){
             throw new Exception("Invalid Task ID passed...");
         }

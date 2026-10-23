@@ -57,12 +57,14 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 
 	@Override
 	public DepartmentHead getDepartmentHeadById(long departmentHeadId) throws Exception {
-		if (departmentHeadId < 1) {
-			throw new Exception("Invalid DepartmentHead ID passed...");
-		}
 		if (departmentHeadRepo.count() == 0) {
 			throw new Exception("DepartmentHead repo is empty...");
 		}
+
+		if (departmentHeadId < 1) {
+			throw new Exception("Invalid DepartmentHead ID passed...");
+		}
+
 		if (!departmentHeadRepo.existsById(departmentHeadId)) {
 			throw new Exception("No DepartmentHead exists by that ID...");
 		}
@@ -73,6 +75,10 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 	@Override
 	public DepartmentHead updateDepartmentHead(long departmentHeadId, LocalDate startingDate, LocalDate endingDate,
 			Department department, User user) throws Exception {
+		if(departmentHeadRepo.count() == 0){
+			throw new Exception("No department heads exist to update...");
+		}
+
 		if (departmentHeadId < 1) {
 			throw new Exception("Invalid DepartmentHead ID passed...");
 		}
@@ -113,6 +119,10 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 
 	@Override
 	public void deleteDepartmentHead(long departmentHeadId) throws Exception {
+		if(departmentHeadRepo.count() == 0){
+			throw new Exception("No department heads to delete...");
+		}
+
 		if (departmentHeadId < 1) {
 			throw new Exception("Invalid DepartmentHead ID passed...");
 		}

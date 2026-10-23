@@ -69,12 +69,17 @@ public class CRUDUserServiceImp implements ICRUDUserService {
 
     @Override
     public User updateUser(long idUser, String name, String surname, String email, String role, Department department) throws Exception {
-        if(!userRepo.existsById(idUser)){
-            throw new Exception("No user exists with that ID...");
+        if(userRepo.count() == 0){
+            throw new Exception("No users exist to update...");
         }
 
         if(idUser < 1){
             throw new Exception("Invalid ID passed...");
+        }
+
+
+        if(!userRepo.existsById(idUser)){
+            throw new Exception("No user exists with that ID...");
         }
 
         if(name.isEmpty() || surname.isEmpty() || email.isEmpty() || role.isEmpty() || department == null){
@@ -112,6 +117,10 @@ public class CRUDUserServiceImp implements ICRUDUserService {
 
     @Override
     public void deleteUser(long idUser) throws Exception {
+        if(userRepo.count() == 0){
+            throw new Exception("No users exist to delete...");
+        }
+
         if(idUser < 1){
             throw new Exception("Invalid user ID passed...");
         }
