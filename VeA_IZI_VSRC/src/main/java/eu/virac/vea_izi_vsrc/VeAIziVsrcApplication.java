@@ -48,6 +48,9 @@ public class VeAIziVsrcApplication {
 
                 department_repo.saveAll(Arrays.asList(d1, d2, d3));
                 
+//                Admin
+                User u0 = new User("Admin", "Admin", "test@test.com", "Admin", null);
+                
 //                Department heads
 
 //                Name, Surname, email, role, department
@@ -63,7 +66,7 @@ public class VeAIziVsrcApplication {
                 User u6 = new User("Aaaaaa", "Bbbbbb", "test6@test.com", "Worker", d3);
 
 
-                user_repo.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
+                user_repo.saveAll(Arrays.asList(u0, u1, u2, u3, u4, u5, u6));
 
 //                Department, User, starting_date
                 DepartmentHead dh1 = new DepartmentHead(d1, u1, LocalDate.now());
@@ -116,6 +119,14 @@ public class VeAIziVsrcApplication {
                 SecUser user5 = new SecUser("WorkerWorker", encoder.encode("abcde"), auth3);
                 SecUser user6 = new SecUser("NameSurname", encoder.encode("edcba"), auth3);
                 SecUser user7 = new SecUser("AaaaaaBbbbbb", encoder.encode("abcba"), auth3);
+                
+                user1.setUser(u0);
+                user2.setUser(u1);
+                user3.setUser(u2);
+                user4.setUser(u3);
+                user5.setUser(u4);
+                user6.setUser(u5);
+                user7.setUser(u6);
                 sec_user_repo.saveAll(Arrays.asList(user1, user2, user3, user4, user5, user6, user7));
                 
                 auth1.addUser(user1);
