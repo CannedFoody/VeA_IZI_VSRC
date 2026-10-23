@@ -33,10 +33,17 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (kpi == null) {
 			throw new Exception("Passed KPI object is null...");
 		}
-		if (kpi.getCreationDate() == null || kpi.getTitle().isEmpty() || kpi.getDescription().isEmpty()
+		if (kpi.getCreationDate() == null || kpi.getDeadline() == null || kpi.getTitle() == null
+				|| kpi.getTitle().isEmpty() || kpi.getDescription() == null || kpi.getDescription().isEmpty()
 				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null
 				|| kpi.getOverlooker() == null) {
 			throw new Exception("One or more of the KPI fields are empty...");
+		}
+		if (!kpi.getTitle().matches("^[A-Ža-ž0-9-()\\\\s]{1,100}$") || !kpi.getDescription().matches("^[A-Ža-ž0-9-()\\\\s]{1,200}$")) {
+			throw new Exception("Invalid title or description...");
+		}
+		if (kpi.getDeadline().isBefore(kpi.getCreationDate())) {
+			throw new Exception("Deadline cannot be before the creation date...");
 		}
 
 		// return kpiRepo.save(kpi);
@@ -86,9 +93,15 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		if (!kpiRepo.existsById(idKPI)) {
 			throw new Exception("No category exists by that ID...");
 		}
-		if (creationDate == null || deadline == null || title == null || description == null || status == null
-				|| category == null || creator == null || overlooker == null) {
+		if (creationDate == null || deadline == null || title == null || title.isEmpty() || description == null
+				|| description.isEmpty() || status == null || category == null || creator == null || overlooker == null) {
 			throw new Exception("Incorrect KPI input data...");
+		}
+		if (!title.matches("^[A-Ža-ž0-9-()\\\\s]{1,100}$") || !description.matches("^[A-Ža-ž0-9-()\\\\s]{1,200}$")) {
+			throw new Exception("Invalid title or description...");
+		}
+		if (deadline.isBefore(creationDate)) {
+			throw new Exception("Deadline cannot be before the creation date...");
 		}
 
 		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
