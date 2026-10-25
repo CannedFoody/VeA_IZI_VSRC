@@ -3,6 +3,7 @@ package eu.virac.vea_izi_vsrc.controller;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -596,10 +597,10 @@ public class AdminController {
     // ADD KPI POST
     // After successful creation redirects to: localhost:8080/admin/kpi/show/all
     @PostMapping("/kpi/add")
-    public String addKPIPost(KPI kpi, Model model) {
+    public String addKPIPost(KPI kpi, Model model, Authentication authentication) {
         
         try {
-            kpiService.createNewKPI(kpi);
+            kpiService.createNewKPI(kpi, authentication.getName());
             model.addAttribute("package", kpiService.getAllKPIs());
             return "admin-kpi-show-all-page";
         }

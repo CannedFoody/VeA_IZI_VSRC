@@ -10,7 +10,7 @@ import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 
 public interface ICRUDKPIService {
 
-	public abstract KPI createNewKPI(KPI kpi) throws Exception;
+	public abstract KPI createNewKPI(KPI kpi, String username) throws Exception;
 	
 	public abstract ArrayList<KPI> getAllKPIs() throws Exception;
 	

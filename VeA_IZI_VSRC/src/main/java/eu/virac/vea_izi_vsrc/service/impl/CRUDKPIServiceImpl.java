@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 import eu.virac.vea_izi_vsrc.event.KpiCreatedEvent;
 import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.Category;
+import eu.virac.vea_izi_vsrc.model.DepartmentHead;
 import eu.virac.vea_izi_vsrc.model.KPI;
 import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
+import eu.virac.vea_izi_vsrc.model.security.SecUser;
+import eu.virac.vea_izi_vsrc.repo.IDepartmentHeadRepo;
 import eu.virac.vea_izi_vsrc.repo.IKPIRepo;
 import eu.virac.vea_izi_vsrc.repo.IUserRepo;
+import eu.virac.vea_izi_vsrc.repo.security.ISecUserRepo;
 import eu.virac.vea_izi_vsrc.service.ICRUDKPIService;
 
 @Service
@@ -27,12 +31,34 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 
 	@Autowired
 	private NotificationEventProducer producer;
+	
+	@Autowired
+	private ISecUserRepo secUserRepo;
+	
+	@Autowired
+	private IDepartmentHeadRepo departmentHeadRepo;
 
 	@Override
-	public KPI createNewKPI(KPI kpi) throws Exception {
+	public KPI createNewKPI(KPI kpi, String username) throws Exception {
 		if (kpi == null) {
 			throw new Exception("Passed KPI object is null...");
 		}
+		
+		SecUser login = secUserRepo.findByUsername(username);
+		User creator = login.getUser();
+		if (creator == null) {
+			throw new Exception("Login account not linked to a user...");
+		}
+		kpi.setCreator(creator);
+		
+		if (creator.getDepartment() != null) {
+			DepartmentHead overlooker = departmentHeadRepo.findFirstByDepartmentAndEndingDateIsNull(creator.getDepartment());
+			if (overlooker == null) {
+				throw new Exception("Department has no current head...");
+			}
+			kpi.setOverlooker(overlooker.getUser());
+		}
+		
 		if (kpi.getCreationDate() == null || kpi.getDeadline() == null || kpi.getTitle() == null
 				|| kpi.getTitle().isEmpty() || kpi.getDescription() == null || kpi.getDescription().isEmpty()
 				|| kpi.getStatus() == null || kpi.getCategory() == null || kpi.getCreator() == null
