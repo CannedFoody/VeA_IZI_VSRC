@@ -27,6 +27,23 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 				|| departmentHead.getDepartment() == null || departmentHead.getUser() == null) {
 			throw new Exception("One or more of the DepartmentHead fields are empty...");
 		}
+
+		if (departmentHead.getEndingDate() == null) {
+			DepartmentHead old_head = departmentHeadRepo
+					.findFirstByDepartmentAndEndingDateIsNull(departmentHead.getDepartment());
+
+			if (old_head != null) {
+				if (old_head.getUser().getIdUser() == departmentHead.getUser().getIdUser()) {
+					throw new Exception("This user is already the head of the department...");
+				}
+				if (departmentHead.getStartingDate().isBefore(old_head.getStartingDate())) {
+					throw new Exception("New head cannot start before the current head...");
+				}
+
+				old_head.setEndingDate(departmentHead.getStartingDate());
+				departmentHeadRepo.save(old_head);
+			}
+		}
 		
 		return departmentHeadRepo.save(departmentHead);
 	}
@@ -72,6 +89,17 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		
 		DepartmentHead department_head_to_update = departmentHeadRepo.findById(departmentHeadId).get();
 		
+		if (department_head_to_update.getUser().getIdUser() != user.getIdUser()) {
+			if (department_head_to_update.getEndingDate() != null) {
+				throw new Exception("This head's term has already ended, create a new record instead...");
+			}
+
+			department_head_to_update.setEndingDate(LocalDate.now());
+			departmentHeadRepo.save(department_head_to_update);
+
+			return departmentHeadRepo.save(new DepartmentHead(department_head_to_update.getDepartment(), user, LocalDate.now()));
+		}
+		
 		if (!department_head_to_update.getStartingDate().equals(startingDate)) {
 			department_head_to_update.setStartingDate(startingDate);
 		}
@@ -80,9 +108,6 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		}
 		if (!department_head_to_update.getDepartment().equals(department)) {
 			department_head_to_update.setDepartment(department);
-		}
-		if (!department_head_to_update.getUser().equals(user)) {
-			department_head_to_update.setUser(user);
 		}
 		
 		return departmentHeadRepo.save(department_head_to_update);
@@ -98,7 +123,7 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 			departmentHeadRepo.deleteById(departmentHeadId);
 		}
 		else{
-            throw new Exception("No KPI exists by that ID...");
+            throw new Exception("No DepartmentHead exists by that ID...");
         }
 	}
 
