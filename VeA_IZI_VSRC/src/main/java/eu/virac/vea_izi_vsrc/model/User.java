@@ -3,6 +3,10 @@ package eu.virac.vea_izi_vsrc.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -53,7 +57,11 @@ public class User {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @ToString.Exclude
     private Department department;
-
+    
+    @ManyToMany(mappedBy = "users")
+    @ToString.Exclude
+    private Collection<KPI> kpis = new ArrayList<KPI>();
+    
 
     public User(String name, String surname, String email, String role, Department department){
         setName(name);
