@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import eu.virac.vea_izi_vsrc.model.Category;
 import eu.virac.vea_izi_vsrc.model.Department;
@@ -35,6 +36,7 @@ import eu.virac.vea_izi_vsrc.service.IDepartmentHeadFilterService;
 import eu.virac.vea_izi_vsrc.service.IFilterProjectService;
 import eu.virac.vea_izi_vsrc.service.IFilterUserService;
 import eu.virac.vea_izi_vsrc.service.IKPIFilterStatsService;
+import eu.virac.vea_izi_vsrc.service.ITaskFilterService;
 
 @Controller
 @RequestMapping("/admin")
@@ -58,6 +60,7 @@ public class AdminController {
     @Autowired private IKPIFilterStatsService kpiFilterService;
     @Autowired private IFilterProjectService projectFilterService;
     @Autowired private IFilterUserService userFilterService;
+    @Autowired private ITaskFilterService taskFilterService;
 
 	
     // ------------------------------------------------------------
@@ -1219,7 +1222,35 @@ public class AdminController {
         }
     }
     
-    
+ // -------- Task filters --------
+
+    // FILTER tasks by status and/or KPI (form page with dropdowns)
+    // localhost:8080/admin/task/filter
+    // localhost:8080/admin/task/filter?status=InProgress
+    // localhost:8080/admin/task/filter?status=InProgress&kpiId=1
+    @GetMapping("/task/filter")
+    public String filterTasks(@RequestParam(name = "status", required = false) TaskStatus status,
+                              @RequestParam(name = "kpiId", required = false) Long kpiId,
+                              Model model) {
+        try {
+            model.addAttribute("statuses", TaskStatus.values());
+            model.addAttribute("kpis", kpiService.getAllKPIs());
+            model.addAttribute("selectedStatus", status);
+            model.addAttribute("selectedKpiId", kpiId);
+
+            boolean searched = (status != null || kpiId != null);
+            model.addAttribute("searched", searched);
+
+            if (searched) {
+                model.addAttribute("tasks", taskFilterService.filterTasks(status, kpiId));
+            }
+            return "task-filter-page";
+        }
+        catch (Exception e) {
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
 
 }
 
