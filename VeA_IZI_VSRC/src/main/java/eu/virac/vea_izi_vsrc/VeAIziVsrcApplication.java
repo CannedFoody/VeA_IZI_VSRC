@@ -1,14 +1,21 @@
 package eu.virac.vea_izi_vsrc;
 
 import eu.virac.vea_izi_vsrc.repo.*;
+import eu.virac.vea_izi_vsrc.repo.security.ISecAuthorityRepo;
+import eu.virac.vea_izi_vsrc.repo.security.ISecUserRepo;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import eu.virac.vea_izi_vsrc.model.*;
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
+import eu.virac.vea_izi_vsrc.model.security.SecAuthority;
+import eu.virac.vea_izi_vsrc.model.security.SecUser;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,7 +31,7 @@ public class VeAIziVsrcApplication {
     @Bean
     public CommandLineRunner saveDataInDB(ICategoryRepo category_repo, IDepartmentRepo department_repo, IUserRepo user_repo,
                                           IDepartmentHeadRepo department_head_repo, IKPIRepo kpi_repo, ISubCategoryRepo sub_category_repo,
-                                          ITaskRepo task_repo, IProjectRepo project_repo) {
+                                          ITaskRepo task_repo, IProjectRepo project_repo, ISecUserRepo sec_user_repo, ISecAuthorityRepo auth_repo) {
         return new CommandLineRunner() {
 
             @Override
@@ -42,11 +49,14 @@ public class VeAIziVsrcApplication {
                 Department d3 = new Department("Department 3", "Desc 3", "Goal3");
 
                 department_repo.saveAll(Arrays.asList(d1, d2, d3));
-
+                
+//                Admin
+                User u0 = new User("Admin", "Admin", "test@test.com", "Admin", null);
+                
 //                Department heads
 
 //                Name, Surname, email, role, department
-                User u1 = new User("John", "Doe", "test@test.com", "DepartmentHead", d1);
+                User u1 = new User("John", "Doe", "normundsbrizs@gmail.com", "DepartmentHead", d1);
                 User u2 = new User("Mary", "Sue", "test2@test.com", "DepartmentHead", d2);
                 User u3 = new User("Bill", "Brown", "test3@test.com", "DepartmentHead", d3);
 
@@ -58,7 +68,7 @@ public class VeAIziVsrcApplication {
                 User u6 = new User("Aaaaaa", "Bbbbbb", "test6@test.com", "Worker", d3);
 
 
-                user_repo.saveAll(Arrays.asList(u1, u2, u3, u4, u5, u6));
+                user_repo.saveAll(Arrays.asList(u0, u1, u2, u3, u4, u5, u6));
 
 //                Department, User, starting_date
                 DepartmentHead dh1 = new DepartmentHead(d1, u1, LocalDate.now());
@@ -95,6 +105,40 @@ public class VeAIziVsrcApplication {
                 Project p3 = new Project("Project3", "Desc3");
 
                 project_repo.saveAll(Arrays.asList(p1, p2, p3));
+                
+//                Auth
+                SecAuthority auth1 = new SecAuthority("ADMIN");
+                SecAuthority auth2 = new SecAuthority("DHEAD");
+                SecAuthority auth3 = new SecAuthority("WORKER");
+                auth_repo.saveAll(Arrays.asList(auth1, auth2, auth3));
+                
+                PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+                
+                SecUser user1 = new SecUser("admin", encoder.encode("admin"), auth1);
+                SecUser user2 = new SecUser("JohnDoe", encoder.encode("12345"), auth2);
+                SecUser user3 = new SecUser("MarySue", encoder.encode("54321"), auth2);
+                SecUser user4 = new SecUser("BillBrown", encoder.encode("12321"), auth2);
+                SecUser user5 = new SecUser("WorkerWorker", encoder.encode("abcde"), auth3);
+                SecUser user6 = new SecUser("NameSurname", encoder.encode("edcba"), auth3);
+                SecUser user7 = new SecUser("AaaaaaBbbbbb", encoder.encode("abcba"), auth3);
+                
+                user1.setUser(u0);
+                user2.setUser(u1);
+                user3.setUser(u2);
+                user4.setUser(u3);
+                user5.setUser(u4);
+                user6.setUser(u5);
+                user7.setUser(u6);
+                sec_user_repo.saveAll(Arrays.asList(user1, user2, user3, user4, user5, user6, user7));
+                
+                auth1.addUser(user1);
+                auth2.addUser(user2);
+                auth2.addUser(user3);
+                auth2.addUser(user4);
+                auth3.addUser(user5);
+                auth3.addUser(user6);
+                auth3.addUser(user7);
+                auth_repo.saveAll(Arrays.asList(auth1, auth2, auth3));
             }
         };
     }

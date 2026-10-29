@@ -45,12 +45,13 @@ public class CRUDSubCategoryServiceImpl implements ICRUDSubCategoryService {
 
     @Override
     public SubCategory getSubCategoryById(long idSubCategory) throws Exception {
-        if (idSubCategory < 1) {
-            throw new Exception("Invalid SubCategory ID passed...");
-        }
-
         if(sub_cat_repo.count() == 0){
             throw new Exception("SubCategory repo is empty...");
+        }
+
+
+        if (idSubCategory < 1) {
+            throw new Exception("Invalid SubCategory ID passed...");
         }
 
         if(!sub_cat_repo.existsById(idSubCategory)){
@@ -62,12 +63,16 @@ public class CRUDSubCategoryServiceImpl implements ICRUDSubCategoryService {
 
     @Override
     public SubCategory updateSubCategory(long idSubCategory, String title, String description) throws Exception {
-        if(!sub_cat_repo.existsById(idSubCategory)){
-            throw new Exception("No SubCategory with that ID exists...");
+        if(sub_cat_repo.count() == 0){
+            throw new Exception("No sub categories exist to update...");
         }
 
         if(idSubCategory < 1){
             throw new Exception("Incorrect SubCategory ID passed...");
+        }
+
+        if(!sub_cat_repo.existsById(idSubCategory)){
+            throw new Exception("No SubCategory with that ID exists...");
         }
 
         if(title == null || description == null){
@@ -89,6 +94,10 @@ public class CRUDSubCategoryServiceImpl implements ICRUDSubCategoryService {
 
     @Override
     public void deleteSubCategory(long idSubCategory) throws Exception {
+        if(sub_cat_repo.count() == 0){
+            throw new Exception("No sub categories exist to delete...");
+        }
+
         if(idSubCategory < 1){
             throw new Exception("Invalid SubCategory ID passed...");
         }

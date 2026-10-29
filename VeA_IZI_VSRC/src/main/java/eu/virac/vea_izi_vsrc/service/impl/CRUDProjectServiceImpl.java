@@ -45,12 +45,12 @@ public class CRUDProjectServiceImpl implements ICRUDProjectService {
 
     @Override
     public Project getProjectById(long idProject) throws Exception {
-        if (idProject < 1) {
-            throw new Exception("Invalid project ID passed...");
-        }
-
         if(project_repo.count() == 0){
             throw new Exception("Project repo is empty...");
+        }
+
+        if (idProject < 1) {
+            throw new Exception("Invalid project ID passed...");
         }
 
         if(!project_repo.existsById(idProject)){
@@ -62,12 +62,16 @@ public class CRUDProjectServiceImpl implements ICRUDProjectService {
 
     @Override
     public Project updateProject(long idProject, String title, String description) throws Exception {
-        if(!project_repo.existsById(idProject)){
-            throw new Exception("No Project with that ID exists...");
+        if(project_repo.count() == 0){
+            throw new Exception("No project's to update...");
         }
 
         if(idProject < 1){
             throw new Exception("Incorrect Project ID passed...");
+        }
+
+        if(!project_repo.existsById(idProject)){
+            throw new Exception("No Project with that ID exists...");
         }
 
         if(title == null || description == null){
@@ -89,6 +93,10 @@ public class CRUDProjectServiceImpl implements ICRUDProjectService {
 
     @Override
     public void deleteProject(long idProject) throws Exception {
+        if(project_repo.count() == 0){
+            throw new Exception("No projects to delete...");
+        }
+
         if(idProject < 1){
             throw new Exception("Invalid Project ID passed...");
         }

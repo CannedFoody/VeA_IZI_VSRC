@@ -15,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -91,6 +93,12 @@ public class KPI {
     @NotNull
     @JoinColumn(name = "overlookerId")
     private User overlooker;
+    
+    @ManyToMany
+    @JoinTable(name = "KPIUserTable",
+    	joinColumns = @JoinColumn(name = "idKPI"),
+    	inverseJoinColumns = @JoinColumn(name = "idUser"))
+    private Collection<User> users = new ArrayList<User>();
 
     public KPI(LocalDate creationDate, LocalDate deadline, String title, String description, Category category, User creator, User overlooker) {
         setCreationDate(creationDate);
