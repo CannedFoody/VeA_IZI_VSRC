@@ -2,6 +2,9 @@ package eu.virac.vea_izi_vsrc.controller;
 
 import java.time.LocalDate;
 
+import eu.virac.vea_izi_vsrc.model.*;
+import eu.virac.vea_izi_vsrc.service.*;
+import eu.virac.vea_izi_vsrc.service.impl.KPISearchServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,30 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import eu.virac.vea_izi_vsrc.model.Category;
-import eu.virac.vea_izi_vsrc.model.Department;
-import eu.virac.vea_izi_vsrc.model.DepartmentHead;
-import eu.virac.vea_izi_vsrc.model.KPI;
-import eu.virac.vea_izi_vsrc.model.Project;
-import eu.virac.vea_izi_vsrc.model.SubCategory;
-import eu.virac.vea_izi_vsrc.model.Task;
-import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
-import eu.virac.vea_izi_vsrc.service.ICRUDCategoryService;
-import eu.virac.vea_izi_vsrc.service.ICRUDDepartmentHeadService;
-import eu.virac.vea_izi_vsrc.service.ICRUDDepartmentService;
-import eu.virac.vea_izi_vsrc.service.ICRUDKPIService;
-import eu.virac.vea_izi_vsrc.service.ICRUDProjectService;
-import eu.virac.vea_izi_vsrc.service.ICRUDSubCategoryService;
-import eu.virac.vea_izi_vsrc.service.ICRUDTaskService;
-import eu.virac.vea_izi_vsrc.service.ICRUDUserService;
-import eu.virac.vea_izi_vsrc.service.IDepartmentFilterService;
-import eu.virac.vea_izi_vsrc.service.IDepartmentHeadFilterService;
-import eu.virac.vea_izi_vsrc.service.IFilterProjectService;
-import eu.virac.vea_izi_vsrc.service.IFilterUserService;
-import eu.virac.vea_izi_vsrc.service.IKPIFilterStatsService;
-import eu.virac.vea_izi_vsrc.service.ITaskFilterService;
 
 @Controller
 @RequestMapping("/admin")
@@ -61,6 +42,7 @@ public class AdminController {
     @Autowired private IFilterProjectService projectFilterService;
     @Autowired private IFilterUserService userFilterService;
     @Autowired private ITaskFilterService taskFilterService;
+    @Autowired private IKPISearchService kpiSearchService;
 
 	
     // ------------------------------------------------------------
@@ -852,12 +834,12 @@ public class AdminController {
             return "error-page";
         }
     }
-    
+
     // ADD task POST
     // After successful creation redirects to: localhost:8080/admin/task/show/all
     @PostMapping("/task/add")
     public String addTaskPost(Task task, Model model) {
-        
+
         try {
             taskService.createNewTask(task);
             model.addAttribute("package", taskService.getAllTasks());
@@ -1251,6 +1233,66 @@ public class AdminController {
             return "error-page";
         }
     }
+
+    @GetMapping("/kpi/search")
+    public String searchKpi(Model model){
+        try{
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("search_params", new KPISearch());
+
+            return "kpi-search";
+        }
+        catch (Exception e){
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+
+    @PostMapping("/kpi/search")
+    public String searchKpi(KPISearch search_params, Model model){
+        try{
+            model.addAttribute("search", kpiSearchService.search(search_params));
+            return "kpi-search-results";
+        }
+        catch (Exception e){
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+
+//    @GetMapping("/task/add")
+//    public String addTaskGet(Model model) {
+//
+//        try {
+//            model.addAttribute("task", new Task());
+//            model.addAttribute("statuses", TaskStatus.values());
+//            model.addAttribute("kpis", kpiService.getAllKPIs());
+//            model.addAttribute("subcategories", subCategoryService.getAllSubCategories());
+//            return "admin-task-add-page";
+//        }
+//        catch (Exception e) {
+//            model.addAttribute("package", e.getMessage());
+//            return "error-page";
+//        }
+//    }
+//
+//    // ADD task POST
+//    // After successful creation redirects to: localhost:8080/admin/task/show/all
+//    @PostMapping("/task/add")
+//    public String addTaskPost(Task task, Model model) {
+//
+//        try {
+//            taskService.createNewTask(task);
+//            model.addAttribute("package", taskService.getAllTasks());
+//            return "admin-task-show-all-page";
+//        }
+//        catch (Exception e) {
+//            model.addAttribute("package", e.getMessage());
+//            return "error-page";
+//        }
+//    }
+
 }
 
 	 
