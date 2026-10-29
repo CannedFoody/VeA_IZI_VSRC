@@ -15,6 +15,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @EntityListeners(AuditingEntityListener.class)
 @Setter
 @Getter
@@ -29,19 +32,19 @@ public class Project {
     @Setter(AccessLevel.NONE)
     @Column(name = "idProject")
     private long idProject;
-    
+
     @Column(name = "created_by")
     @CreatedBy
     private String createdBy;
-    
+
     @Column(name = "last_modified_by")
     @LastModifiedBy
     private String lastModifiedBy;
-    
+
 	@Column(name="created_date", nullable = false, updatable = false)
 	@CreatedDate
 	private LocalDateTime createdDate;
-	
+
 	@Column(name="last_modified_date")
 	@LastModifiedDate
 	private LocalDateTime lastModifiedDate;
@@ -58,10 +61,9 @@ public class Project {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "idKPI")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private KPI kpi;
+    @ManyToMany(mappedBy = "projects")
+    @ToString.Exclude
+    private Collection<KPI> kpis = new ArrayList<KPI>();
 
     public Project(String title, String description) {
         setTitle(title);

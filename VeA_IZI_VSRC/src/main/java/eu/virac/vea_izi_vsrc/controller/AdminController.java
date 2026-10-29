@@ -2,6 +2,9 @@ package eu.virac.vea_izi_vsrc.controller;
 
 import java.time.LocalDate;
 
+import eu.virac.vea_izi_vsrc.model.*;
+import eu.virac.vea_izi_vsrc.service.*;
+import eu.virac.vea_izi_vsrc.service.impl.KPISearchServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -13,14 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import eu.virac.vea_izi_vsrc.model.Category;
-import eu.virac.vea_izi_vsrc.model.Department;
-import eu.virac.vea_izi_vsrc.model.DepartmentHead;
-import eu.virac.vea_izi_vsrc.model.KPI;
-import eu.virac.vea_izi_vsrc.model.Project;
-import eu.virac.vea_izi_vsrc.model.SubCategory;
-import eu.virac.vea_izi_vsrc.model.Task;
-import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.model.Enums.KPIStatus;
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
 import eu.virac.vea_izi_vsrc.service.ICRUDCategoryService;
@@ -62,6 +57,7 @@ public class AdminController {
     @Autowired private IFilterProjectService projectFilterService;
     @Autowired private IFilterUserService userFilterService;
     @Autowired private ITaskFilterService taskFilterService;
+    @Autowired private IKPISearchService kpiSearchService;
     @Autowired private ISubCategoryFilterService subCategoryFilterService;
 
 	
@@ -1253,7 +1249,7 @@ public class AdminController {
             return "error-page";
         }
     }
-    
+
     // -------- SubCategory search --------
 
     // SEARCH subcategories by keyword in title (form page)
@@ -1272,6 +1268,33 @@ public class AdminController {
             return "subcategory-search-page";
         }
         catch (Exception e) {
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+
+    @GetMapping("/kpi/search")
+    public String searchKpi(Model model){
+        try{
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("search_params", new KPISearch());
+
+            return "kpi-search";
+        }
+        catch (Exception e){
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+
+    @PostMapping("/kpi/search")
+    public String searchKpi(KPISearch search_params, Model model){
+        try{
+            model.addAttribute("search", kpiSearchService.search(search_params));
+            return "kpi-search-results";
+        }
+        catch (Exception e){
             model.addAttribute("package", e.getMessage());
             return "error-page";
         }

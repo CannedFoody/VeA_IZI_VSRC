@@ -100,6 +100,12 @@ public class KPI {
     	inverseJoinColumns = @JoinColumn(name = "idUser"))
     private Collection<User> users = new ArrayList<User>();
 
+    @ManyToMany
+    @JoinTable(name = "KPIProjectTable",
+        joinColumns = @JoinColumn(name = "idKPI"),
+        inverseJoinColumns = @JoinColumn(name = "idProject"))
+    private Collection<Project> projects = new ArrayList<Project>();
+
     public KPI(LocalDate creationDate, LocalDate deadline, String title, String description, Category category, User creator, User overlooker) {
         setCreationDate(creationDate);
         setDeadline(deadline);
