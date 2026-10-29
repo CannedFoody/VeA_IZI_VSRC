@@ -37,6 +37,7 @@ import eu.virac.vea_izi_vsrc.service.IFilterProjectService;
 import eu.virac.vea_izi_vsrc.service.IFilterUserService;
 import eu.virac.vea_izi_vsrc.service.IKPIFilterStatsService;
 import eu.virac.vea_izi_vsrc.service.ITaskFilterService;
+import eu.virac.vea_izi_vsrc.service.ISubCategoryFilterService;
 
 @Controller
 @RequestMapping("/admin")
@@ -61,6 +62,7 @@ public class AdminController {
     @Autowired private IFilterProjectService projectFilterService;
     @Autowired private IFilterUserService userFilterService;
     @Autowired private ITaskFilterService taskFilterService;
+    @Autowired private ISubCategoryFilterService subCategoryFilterService;
 
 	
     // ------------------------------------------------------------
@@ -1245,6 +1247,29 @@ public class AdminController {
                 model.addAttribute("tasks", taskFilterService.filterTasks(status, kpiId));
             }
             return "task-filter-page";
+        }
+        catch (Exception e) {
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+    
+    // -------- SubCategory search --------
+
+    // SEARCH subcategories by keyword in title (form page)
+    // localhost:8080/admin/subcategory/search
+    // localhost:8080/admin/subcategory/search?keyword=SubC
+    @GetMapping("/subcategory/search")
+    public String searchSubCategories(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        try {
+            boolean searched = (keyword != null && !keyword.isBlank());
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("searched", searched);
+
+            if (searched) {
+                model.addAttribute("subcategories", subCategoryFilterService.filterByKeyword(keyword.trim()));
+            }
+            return "subcategory-search-page";
         }
         catch (Exception e) {
             model.addAttribute("package", e.getMessage());

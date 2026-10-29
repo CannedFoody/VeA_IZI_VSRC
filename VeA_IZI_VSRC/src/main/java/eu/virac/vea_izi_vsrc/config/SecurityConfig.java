@@ -43,7 +43,8 @@ public class SecurityConfig {
 				.requestMatchers("/admin/kpi/show/all").permitAll()
 				.requestMatchers("/admin/kpi/add").hasAnyAuthority("ADMIN", "DHEAD")
 				.requestMatchers("/admin/department/add").hasAuthority("ADMIN")
-				.requestMatchers("/admin/task/filter").authenticated());
+				.requestMatchers("/admin/task/filter").authenticated()
+				.requestMatchers("/admin/**").hasAuthority("ADMIN"));
 		http.formLogin(auth->auth.permitAll());
 		
 		return http.build();
