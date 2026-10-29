@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import eu.virac.vea_izi_vsrc.event.KpiCreatedEvent;
 import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
@@ -158,6 +160,21 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		}
 
 		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
+		
+		Authentication authentication =
+		        SecurityContextHolder.getContext().getAuthentication();
+		
+		boolean isAdmin = authentication != null
+		        && authentication.getAuthorities().stream()
+		                .anyMatch(authority ->
+		                        authority.getAuthority().equals("ADMIN"));
+		
+		if (!isAdmin
+		        && "HIGH".equals(status.getHiearchy())
+		        && "LOW".equals(kpi_to_update.getStatus().getHiearchy())) {
+		    throw new Exception(
+		            "Can't go from a lower hierarchy to a higher one.");
+		}
 
 		if (!kpi_to_update.getCreationDate().equals(creationDate)) {
 			kpi_to_update.setCreationDate(creationDate);

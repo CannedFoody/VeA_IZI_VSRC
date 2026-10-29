@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface IProjectRepo extends CrudRepository<Project, Long> {
 
-	ArrayList<Project> findByTitleOrDescriptionContaining(String keyword, String keyword2);
+	ArrayList<Project> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String keyword, String keyword2);
 }
