@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 @Setter
 @Getter
 @ToString
@@ -31,10 +34,9 @@ public class Project {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "idKPI")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private KPI kpi;
+    @ManyToMany(mappedBy = "projects")
+    @ToString.Exclude
+    private Collection<KPI> kpis = new ArrayList<KPI>();
 
     public Project(String title, String description) {
         setTitle(title);

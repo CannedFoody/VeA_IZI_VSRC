@@ -2,6 +2,7 @@ package eu.virac.vea_izi_vsrc.service.impl;
 
 import java.util.ArrayList;
 
+import eu.virac.vea_izi_vsrc.model.SubCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
