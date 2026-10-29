@@ -36,7 +36,7 @@ public class FilterKPIController {
         }
     }
     
- // FILTER KPIs by status
+    // FILTER KPIs by status
     // localhost:8080/admin/kpi/filter/status/Active
     @GetMapping("/kpi/filter/status/{status}")
     public String filterKPIsByStatus(@PathVariable(name = "status") KPIStatus status, Model model) {
