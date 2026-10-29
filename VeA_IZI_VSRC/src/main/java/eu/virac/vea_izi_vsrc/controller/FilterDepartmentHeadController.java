@@ -37,4 +37,37 @@ public class FilterDepartmentHeadController {
     }
     
     
+    // FILTER department heads that are active
+    // localhost:8080/admin/departmenthead/filter/active
+    @GetMapping("/departmenthead/filter/active")
+    public String filterActiveDepartmentHeads(Model model) {
+
+        try {
+            model.addAttribute("package", departmentHeadFilterService.filterActiveDepartmentHeads());
+            return "admin-departmenthead-show-all-page";
+        }
+        catch (Exception e) {
+            model.addAttribute("package", e.getMessage());
+            return "error-page";
+        }
+    }
+    
+    
+	// FILTER active Department Heads who started after a given date
+	// localhost:8080/admin/departmenthead/filter/active/after/2025-01-01
+	@GetMapping("/departmenthead/filter/active/after/{date}")
+	public String filterActiveDepartmentHeadsByStartDate(@PathVariable(name = "date") LocalDate date, Model model) {
+	
+	try {	
+	    model.addAttribute("package", departmentHeadFilterService.filterActiveByStartingDateAfter(date));
+	    return "admin-departmenthead-show-all-page";
+	}
+	catch (Exception e) {
+	    model.addAttribute("package", e.getMessage());
+	    return "error-page";
+	    }
+	}
+    
+	
+	
 }
