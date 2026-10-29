@@ -24,7 +24,7 @@ public class FilterProjectServiceImpl implements IFilterProjectService {
 			throw new Exception("No project objects exist to filter...");
 		}
 		
-		ArrayList<Project> filtered_list = project_repo.findByTitleOrDescriptionContaining(keyword, keyword);
+		ArrayList<Project> filtered_list = project_repo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
 		
 		if (filtered_list.isEmpty()) {
 			throw new Exception("No projects were found with that keyword...");
