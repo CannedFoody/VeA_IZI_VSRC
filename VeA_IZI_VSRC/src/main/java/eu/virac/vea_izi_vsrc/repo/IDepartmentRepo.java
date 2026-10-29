@@ -8,5 +8,5 @@ import java.util.ArrayList;
 
 public interface IDepartmentRepo extends CrudRepository<Department, Long> {
 
-    ArrayList<Department> findByNameOrDescriptionContaining(String keyword, String keyword1);
+    ArrayList<Department> findByNameContainingOrDescriptionContaining(String keyword, String keyword1);
 }

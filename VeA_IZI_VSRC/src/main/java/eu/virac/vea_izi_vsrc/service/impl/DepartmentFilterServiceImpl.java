@@ -25,7 +25,7 @@ public class DepartmentFilterServiceImpl implements IDepartmentFilterService {
             throw new Exception("No departments were found to filter...");
         }
 
-        ArrayList<Department> filtered_list = department_repo.findByNameOrDescriptionContaining(keyword, keyword);
+        ArrayList<Department> filtered_list = department_repo.findByNameContainingOrDescriptionContaining(keyword, keyword);
 
         if(filtered_list.isEmpty()){
             throw new Exception("No departments were found that contain the passed keyword...");
