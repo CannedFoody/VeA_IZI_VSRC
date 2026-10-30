@@ -34,4 +34,8 @@ public class KPISearchServiceImpl implements IKPISearchService {
             return search_result;
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ABirzniece_develop

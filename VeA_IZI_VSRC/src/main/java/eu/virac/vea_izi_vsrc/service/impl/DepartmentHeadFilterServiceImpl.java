@@ -71,5 +71,51 @@ public class DepartmentHeadFilterServiceImpl implements IDepartmentHeadFilterSer
         }
     }
 
+    
+//  Finds Department Heads that are active (!=null)
+	@Override
+	public ArrayList<DepartmentHead> filterActiveDepartmentHeads() throws Exception {
+		if(d_head_repo.count() == 0){
+	        throw new Exception("Department head repo is empty...");
+	    }
+
+	    ArrayList<DepartmentHead> activeHeads =
+	            d_head_repo.findByEndingDateIsNull();
+
+	    if(activeHeads.isEmpty()){
+	        throw new Exception("No active department heads found...");
+	    }
+
+	    return activeHeads;
+	}
+
+	
+//  Finds Department Heads that are active AFTER the given date
+	@Override
+	public ArrayList<DepartmentHead> filterActiveByStartingDateAfter(LocalDate date) throws Exception {
+
+	    if (date == null) {
+	        throw new Exception("Passed date variable is null...");
+	    }
+
+	    if (date.isAfter(LocalDate.now())
+	            || date.isBefore(LocalDate.of(1900, 1, 1))) {
+	        throw new Exception("Passed date is not valid...");
+	    }
+
+	    if (d_head_repo.count() == 0) {
+	        throw new Exception("Department head repo is empty...");
+	    }
+
+	    ArrayList<DepartmentHead> filteredList =
+	            d_head_repo.findByStartingDateAfterAndEndingDateIsNull(date);
+
+	    if (filteredList.isEmpty()) {
+	        throw new Exception(
+	                "No active Department Heads starting after the passed date were found...");
+	    }
+
+	    return filteredList;
+	}
 
 }

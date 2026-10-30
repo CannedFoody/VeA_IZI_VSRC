@@ -9,4 +9,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface IProjectRepo extends CrudRepository<Project, Long> {
 
 	ArrayList<Project> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String keyword, String keyword2);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ABirzniece_develop
