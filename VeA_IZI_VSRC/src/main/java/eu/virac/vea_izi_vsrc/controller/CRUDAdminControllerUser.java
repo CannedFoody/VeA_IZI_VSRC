@@ -80,8 +80,15 @@ public class CRUDAdminControllerUser {
             return "admin-user-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("user", user);
+
+            try {
+                model.addAttribute("departments", departmentService.getAllDepartments());
+            }
+            catch (Exception ignored) {}
+
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-user-add-page";
         }
     }
 
@@ -118,8 +125,15 @@ public class CRUDAdminControllerUser {
             return "admin-user-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("user",user);
+
+            try {
+                model.addAttribute("departments",departmentService.getAllDepartments());
+            }
+            catch (Exception ignored) {}
+
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-user-update-page";
         }
     }
 

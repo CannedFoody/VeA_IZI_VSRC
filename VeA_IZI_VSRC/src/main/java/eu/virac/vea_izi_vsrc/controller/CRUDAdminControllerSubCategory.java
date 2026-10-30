@@ -79,8 +79,9 @@ public class CRUDAdminControllerSubCategory {
             return "admin-subcategory-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("subcategory", subCategory);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-subcategory-add-page";
         }
     }
 
@@ -111,8 +112,9 @@ public class CRUDAdminControllerSubCategory {
             return "admin-subcategory-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("subcategory", subCategory);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-subcategory-update-page";
         }
     }
 

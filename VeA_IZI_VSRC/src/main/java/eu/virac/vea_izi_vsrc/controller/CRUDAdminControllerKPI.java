@@ -86,8 +86,9 @@ public class CRUDAdminControllerKPI {
             return "admin-kpi-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+        	model.addAttribute("kpi", kpi);
+        	model.addAttribute("errorMsg", e.getMessage());
+            return "admin-kpi-add-page";
         }
     }
 
@@ -129,8 +130,9 @@ public class CRUDAdminControllerKPI {
             return "admin-kpi-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+        	model.addAttribute("kpi", kpi);
+        	model.addAttribute("errorMsg", e.getMessage());
+            return "admin-kpi-update-page";
         }
     }
 

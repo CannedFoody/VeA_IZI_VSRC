@@ -87,8 +87,17 @@ public class CRUDAdminControllerTask {
             return "admin-task-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("task", task);
+
+            try {
+                model.addAttribute("statuses", TaskStatus.values());
+                model.addAttribute("kpis", kpiService.getAllKPIs());
+                model.addAttribute("subcategories",subCategoryService.getAllSubCategories());
+            }
+            catch (Exception ignored) {}
+
+            model.addAttribute("errorMsg",e.getMessage());
+            return "admin-task-add-page";
         }
     }
 
@@ -128,8 +137,16 @@ public class CRUDAdminControllerTask {
             return "admin-task-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("task", task);
+
+            try {
+                model.addAttribute("statuses", TaskStatus.values());
+                model.addAttribute("kpis", kpiService.getAllKPIs());
+                model.addAttribute("subcategories", subCategoryService.getAllSubCategories());
+            }
+            catch (Exception ignored) {}
+            model.addAttribute("errorMsg",e.getMessage());
+            return "admin-task-update-page";
         }
     }
 

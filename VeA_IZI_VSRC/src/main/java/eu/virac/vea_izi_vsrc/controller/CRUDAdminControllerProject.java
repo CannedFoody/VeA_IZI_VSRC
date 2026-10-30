@@ -81,8 +81,9 @@ public class CRUDAdminControllerProject {
             return "admin-project-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+        	model.addAttribute("project", project);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-project-add-page";
         }
     }
 
@@ -118,8 +119,9 @@ public class CRUDAdminControllerProject {
             return "admin-project-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+        	model.addAttribute("project", project);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-project-update-page";
         }
     }
 

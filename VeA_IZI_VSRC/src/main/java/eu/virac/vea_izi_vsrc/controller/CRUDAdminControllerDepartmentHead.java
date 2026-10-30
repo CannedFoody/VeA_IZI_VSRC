@@ -85,8 +85,16 @@ public class CRUDAdminControllerDepartmentHead {
             return "admin-departmenthead-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("departmenthead",dh);
+            
+            try {
+                model.addAttribute("departments", departmentService.getAllDepartments());
+                model.addAttribute("users", userService.getAllUsers());
+            }
+            catch (Exception ignored) {}
+            
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-departmenthead-add-page";
         }
     }
 
@@ -124,8 +132,16 @@ public class CRUDAdminControllerDepartmentHead {
             return "admin-departmenthead-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("departmenthead",dh);
+            
+            try {
+                model.addAttribute("departments",departmentService.getAllDepartments());
+                model.addAttribute("users", userService.getAllUsers());
+            }
+            catch (Exception ignored) {}
+            
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-departmenthead-update-page";
         }
     }
 

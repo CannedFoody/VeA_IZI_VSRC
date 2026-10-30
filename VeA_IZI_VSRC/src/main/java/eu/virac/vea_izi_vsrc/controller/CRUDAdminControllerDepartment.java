@@ -78,8 +78,9 @@ public class CRUDAdminControllerDepartment {
             return "admin-department-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("department", department);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-department-add-page";
         }
     }
 
@@ -114,8 +115,9 @@ public class CRUDAdminControllerDepartment {
             return "admin-department-show-all-page";
         }
         catch (Exception e) {
-            model.addAttribute("package", e.getMessage());
-            return "error-page";
+            model.addAttribute("department", department);
+            model.addAttribute("errorMsg", e.getMessage());
+            return "admin-department-update-page";
         }
     }
 
