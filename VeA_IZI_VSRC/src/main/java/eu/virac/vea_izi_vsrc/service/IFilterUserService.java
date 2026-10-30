@@ -9,4 +9,7 @@ public interface IFilterUserService {
 	public abstract ArrayList<User> filterUsersByRole(String role) throws Exception;
 	
 	public abstract ArrayList<User> filterUsersByDepartmentId(long idDepartment) throws Exception;
+	
+	public abstract ArrayList<User> filterUsersByNameOrSurname(String keyword) throws Exception;
+
 }

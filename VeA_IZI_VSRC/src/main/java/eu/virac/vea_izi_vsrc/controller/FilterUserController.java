@@ -48,4 +48,19 @@ public class FilterUserController {
     }
     
     
+	// FILTER users by name or surname
+	// localhost:8080/admin/user/filter/name/Na
+	@GetMapping("/user/filter/name/{keyword}")
+	public String filterUsersByNameOrSurname(@PathVariable(name = "keyword") String keyword, Model model) {
+	
+	    try {	
+	        model.addAttribute("package",userFilterService.filterUsersByNameOrSurname(keyword));
+	        return "admin-user-show-all-page";
+	    }
+	    catch (Exception e) {	
+	        model.addAttribute("package",e.getMessage());	
+	        return "error-page";
+	    }
+	}
+    
 }
