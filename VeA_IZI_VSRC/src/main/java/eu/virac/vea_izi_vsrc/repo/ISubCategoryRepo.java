@@ -8,8 +8,6 @@ import eu.virac.vea_izi_vsrc.model.SubCategory;
 
 public interface ISubCategoryRepo extends CrudRepository<SubCategory, Long> {
 	List<SubCategory> findByTitleContainingIgnoreCase(String keyword);
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> ABirzniece_develop
+

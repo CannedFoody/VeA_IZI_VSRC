@@ -1,6 +1,7 @@
 package eu.virac.vea_izi_vsrc.controller;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,9 @@ import eu.virac.vea_izi_vsrc.model.*;
 import eu.virac.vea_izi_vsrc.model.fileConvert.ExcelRow;
 import eu.virac.vea_izi_vsrc.service.*;
 import eu.virac.vea_izi_vsrc.service.fileConvert.IFileService;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/admin")
@@ -320,9 +324,12 @@ public class FileController {
 
             case "kpi":
                 KPI k = kpiService.getKPIById(id);
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Creation Date", k.getCreationDate().toString()));
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Deadline", k.getDeadline().toString()));
                 rows.add(new ExcelRow("kpi", k.getIdKPI(), "Title", k.getTitle()));
                 rows.add(new ExcelRow("kpi", k.getIdKPI(), "Description", k.getDescription()));
                 rows.add(new ExcelRow("kpi", k.getIdKPI(), "Status", k.getStatus().name()));
+                rows.add(new ExcelRow("kpi", k.getIdKPI(), "Category", String.valueOf(k.getCategory().getIdCategory())));
                 break;
 
             case "project":
@@ -417,10 +424,13 @@ public class FileController {
                 
             // KPI
             case "kpi":
-                for (KPI k : kpiService.getAllKPIs()) {
+                for (KPI k : kpiService.getAllKPIs()) {                   
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Creation Date", k.getCreationDate().toString()));
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Deadline", k.getDeadline().toString()));
                     rows.add(new ExcelRow("kpi", k.getIdKPI(), "Title", k.getTitle()));
                     rows.add(new ExcelRow("kpi", k.getIdKPI(), "Description", k.getDescription()));
                     rows.add(new ExcelRow("kpi", k.getIdKPI(), "Status", k.getStatus().name()));
+                    rows.add(new ExcelRow("kpi", k.getIdKPI(), "Category", String.valueOf(k.getCategory().getIdCategory())));                  
                 }
                 break;
 
@@ -588,6 +598,12 @@ public class FileController {
 	                KPI k = new KPI(); // ID auto-generated
 	
 	                for (ExcelRow r : entry.getValue()) {
+	                	
+	                	if (r.getColumnName().equals("Creation Date"))
+	                	    k.setCreationDate(LocalDate.parse(r.getColumnValue()));
+
+	                	if (r.getColumnName().equals("Deadline"))
+	                	    k.setDeadline(LocalDate.parse(r.getColumnValue()));
 	
 	                    if (r.getColumnName().equals("Title"))
 	                        k.setTitle(r.getColumnValue());
@@ -597,9 +613,20 @@ public class FileController {
 	
 	                    if (r.getColumnName().equals("Status"))
 	                        k.setStatus(eu.virac.vea_izi_vsrc.model.Enums.KPIStatus.valueOf(r.getColumnValue()));
+	                    
+	                    if (r.getColumnName().equals("Category")) {
+	                	    long categoryId = Long.parseLong(r.getColumnValue());
+	                	    k.setCategory(categoryService.getCategoryById(categoryId));
+	                    }
 	                }
 	
-	                kpiService.createNewKPI(k);
+	                Authentication authentication =
+	                        SecurityContextHolder.getContext().getAuthentication();
+
+	                String username = authentication.getName();
+
+	                kpiService.createNewKPI(k, username);
+
 	            }
 	            break;
 	

@@ -8,8 +8,5 @@ import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
 
 public interface ITaskFilterService {
 	public abstract ArrayList<Task> filterTasks(TaskStatus status, Long idKPI) throws Exception;
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> ABirzniece_develop

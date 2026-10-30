@@ -15,12 +15,9 @@ public interface IDepartmentHeadRepo extends CrudRepository<DepartmentHead, Long
     ArrayList<DepartmentHead> findByDepartment(Department department);
 
 	DepartmentHead findFirstByDepartmentAndEndingDateIsNull(Department department);
-<<<<<<< HEAD
-}
-=======
-	
+
 	ArrayList<DepartmentHead> findByEndingDateIsNull();
 	
 	ArrayList<DepartmentHead> findByStartingDateAfterAndEndingDateIsNull(LocalDate date);
 }
->>>>>>> ABirzniece_develop
+

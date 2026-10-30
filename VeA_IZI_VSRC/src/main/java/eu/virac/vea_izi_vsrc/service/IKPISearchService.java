@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 public interface IKPISearchService {
     public abstract ArrayList<KPI> search(KPISearch search_params) throws Exception;
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> ABirzniece_develop
+

@@ -77,7 +77,7 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -100,7 +100,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-=======
         
         <!-- Source: https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
@@ -117,7 +116,6 @@
 		    <scope>compile</scope>
 		</dependency>
 		
->>>>>>> ABirzniece_develop
     </dependencies>
 
     <build>

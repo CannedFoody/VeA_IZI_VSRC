@@ -15,8 +15,6 @@ public interface ITaskRepo extends CrudRepository<Task,Long> {
 	ArrayList<Task> findByKpi(KPI kpi);
 	
 	ArrayList<Task> findByStatusAndKpi(TaskStatus status, KPI kpi);
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> ABirzniece_develop
+
