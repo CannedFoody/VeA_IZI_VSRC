@@ -61,7 +61,7 @@ public class User {
     @Pattern(regexp = "[A-Ž]{1}[a-ž]{2,20}([ ]{1}([A-Ž]{1}[a-ž]{2,20}))?")
     private String surname;
 
-    @Column(name="Email")
+    @Column(name="Email", unique=true)
     @NotNull
     @NotEmpty
     @Pattern(regexp = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$")
