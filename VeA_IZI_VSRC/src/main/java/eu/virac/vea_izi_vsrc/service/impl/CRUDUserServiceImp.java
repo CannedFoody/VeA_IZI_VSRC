@@ -1,5 +1,8 @@
 package eu.virac.vea_izi_vsrc.service.impl;
 
+import eu.virac.vea_izi_vsrc.event.UserCreatedEvent;
+import eu.virac.vea_izi_vsrc.event.UserRoleChangedEvent;
+import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.Department;
 import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.repo.IDepartmentRepo;
@@ -18,6 +21,9 @@ public class CRUDUserServiceImp implements ICRUDUserService {
 
     @Autowired
     private IDepartmentRepo departmentRepo;
+    
+    @Autowired
+    private NotificationEventProducer producer;
 
     @Override
     public User createNewUser(User user) throws Exception {
@@ -37,7 +43,15 @@ public class CRUDUserServiceImp implements ICRUDUserService {
             throw new Exception("The department linked to the passed User object doesnt exist...");
         }
 
-        return userRepo.save(user);
+        User saved = userRepo.save(user);
+        
+        String departmentName = departmentRepo.findById(user.getDepartment().getIdDepartment())
+        		.map(Department::getName).orElse("-");
+        producer.publishUserCreated(new UserCreatedEvent(
+        		saved.getIdUser(), saved.getRole(), departmentName,
+        		saved.getEmail(), saved.getName() + " " + saved.getSurname()));
+        
+        return saved;
     }
 
     @Override
@@ -91,6 +105,7 @@ public class CRUDUserServiceImp implements ICRUDUserService {
         }
 
         User user_to_update = userRepo.findById(idUser).get();
+        String oldRole = user_to_update.getRole();
 
         if(!user_to_update.getName().equals(name)){
             user_to_update.setName(name);
@@ -112,7 +127,15 @@ public class CRUDUserServiceImp implements ICRUDUserService {
             user_to_update.setDepartment(department);
         }
 
-        return userRepo.save(user_to_update);
+        User saved = userRepo.save(user_to_update);
+        
+        if (!oldRole.equals(role)) {
+        	producer.publishUserRoleChanged(new UserRoleChangedEvent(
+        			saved.getIdUser(), oldRole, role,
+        			saved.getEmail(), saved.getName() + " " + saved.getSurname()));
+        }
+        
+        return saved;
     }
 
     @Override

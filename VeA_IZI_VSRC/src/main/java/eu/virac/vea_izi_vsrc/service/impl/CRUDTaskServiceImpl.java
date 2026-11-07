@@ -1,6 +1,7 @@
 package eu.virac.vea_izi_vsrc.service.impl;
 
 import eu.virac.vea_izi_vsrc.model.Enums.TaskStatus;
+import eu.virac.vea_izi_vsrc.event.TaskCreatedEvent;
 import eu.virac.vea_izi_vsrc.event.TaskStatusChangedEvent;
 import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.KPI;
@@ -47,7 +48,17 @@ public class CRUDTaskServiceImpl implements ICRUDTaskService {
 			throw new Exception("One of the task fields was passed as empty or null...");
 		}
 
-		return task_repo.save(task);
+		Task saved = task_repo.save(task);
+		
+		kpi_repo.findById(task.getKpi().getIdKPI()).ifPresent(fullKpi -> {
+			User overlooker = fullKpi.getOverlooker();
+			producer.publishTaskCreated(new TaskCreatedEvent(
+					saved.getIdTask(), saved.getTitle(), saved.getDescription(), fullKpi.getTitle(),
+					overlooker.getEmail(),
+					overlooker.getName() + " " + overlooker.getSurname()));
+		});
+		
+		return saved;
 	}
 
 	@Override

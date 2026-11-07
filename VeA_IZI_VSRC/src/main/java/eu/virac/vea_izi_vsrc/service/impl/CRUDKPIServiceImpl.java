@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import eu.virac.vea_izi_vsrc.event.KpiCreatedEvent;
+import eu.virac.vea_izi_vsrc.event.KpiOverlookerChangedEvent;
+import eu.virac.vea_izi_vsrc.event.KpiStatusChangedEvent;
 import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.Category;
 import eu.virac.vea_izi_vsrc.model.DepartmentHead;
@@ -160,6 +162,8 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 		}
 
 		KPI kpi_to_update = kpiRepo.findById(idKPI).get();
+		KPIStatus oldStatus = kpi_to_update.getStatus();
+		long oldOverlookerId = kpi_to_update.getOverlooker().getIdUser();
 		
 		Authentication authentication =
 		        SecurityContextHolder.getContext().getAuthentication();
@@ -203,7 +207,26 @@ public class CRUDKPIServiceImpl implements ICRUDKPIService {
 			kpi_to_update.setOverlooker(overlooker);
 		}
 
-		return kpiRepo.save(kpi_to_update);
+		KPI saved = kpiRepo.save(kpi_to_update);
+		
+		if (oldStatus != status) {
+			userRepo.findById(creator.getIdUser()).ifPresent(fullCreator ->
+				producer.publishKpiStatusChanged(new KpiStatusChangedEvent(
+						saved.getIdKPI(), saved.getTitle(),
+						String.valueOf(oldStatus), status.name(),
+						fullCreator.getEmail(),
+						fullCreator.getName() + " " + fullCreator.getSurname())));
+		}
+		
+		if (oldOverlookerId != overlooker.getIdUser()) {
+			userRepo.findById(overlooker.getIdUser()).ifPresent(newOverlooker ->
+			producer.publishKpiOverlookerChanged(new KpiOverlookerChangedEvent(
+					saved.getIdKPI(), saved.getTitle(), String.valueOf(saved.getDeadline()),
+					newOverlooker.getEmail(),
+					newOverlooker.getName() + " " + newOverlooker.getSurname())));
+		}
+		
+		return saved;
 	}
 
 	@Override

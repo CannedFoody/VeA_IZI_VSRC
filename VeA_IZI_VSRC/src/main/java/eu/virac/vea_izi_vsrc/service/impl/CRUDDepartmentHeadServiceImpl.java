@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import eu.virac.vea_izi_vsrc.event.DepartmentHeadAssignedEvent;
+import eu.virac.vea_izi_vsrc.kafka.NotificationEventProducer;
 import eu.virac.vea_izi_vsrc.model.Department;
 import eu.virac.vea_izi_vsrc.model.DepartmentHead;
 import eu.virac.vea_izi_vsrc.model.User;
 import eu.virac.vea_izi_vsrc.repo.IDepartmentHeadRepo;
+import eu.virac.vea_izi_vsrc.repo.IDepartmentRepo;
+import eu.virac.vea_izi_vsrc.repo.IUserRepo;
 import eu.virac.vea_izi_vsrc.service.ICRUDDepartmentHeadService;
 
 @Service
@@ -18,6 +22,15 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 
 	@Autowired
 	private IDepartmentHeadRepo departmentHeadRepo;
+	
+	@Autowired
+	private IUserRepo userRepo;
+	
+	@Autowired
+	private IDepartmentRepo departmentRepo;
+	
+	@Autowired
+	private NotificationEventProducer producer;
 	
 	@Override
 	public DepartmentHead createNewDepartmentHead(DepartmentHead departmentHead) throws Exception {
@@ -59,7 +72,15 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 			}
 		}
 		
-		return departmentHeadRepo.save(departmentHead);
+		DepartmentHead saved = departmentHeadRepo.save(departmentHead);
+		
+		// Only a current head needs an email
+		if (saved.getEndingDate() == null) {
+			publishHeadAssigned(departmentHead.getUser().getIdUser(),
+					departmentHead.getDepartment().getIdDepartment(), saved.getStartingDate());
+		}
+		
+		return saved;
 	}
 
 	@Override
@@ -127,7 +148,13 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 			department_head_to_update.setEndingDate(LocalDate.now());
 			departmentHeadRepo.save(department_head_to_update);
 
-			return departmentHeadRepo.save(new DepartmentHead(department_head_to_update.getDepartment(), user, LocalDate.now()));
+			DepartmentHead new_head = departmentHeadRepo.save(
+					new DepartmentHead(department_head_to_update.getDepartment(), user, LocalDate.now()));
+			
+			publishHeadAssigned(user.getIdUser(), department_head_to_update.getDepartment().getIdDepartment(),
+					new_head.getStartingDate());
+			
+			return new_head;
 		}
 		
 		if (!department_head_to_update.getStartingDate().equals(startingDate)) {
@@ -159,6 +186,19 @@ public class CRUDDepartmentHeadServiceImpl implements ICRUDDepartmentHeadService
 		else{
             throw new Exception("No DepartmentHead exists by that ID...");
         }
+	}
+	
+	// Loads the full user and department and publishes the event
+	private void publishHeadAssigned(long userId, long departmentId, LocalDate startingDate) {
+		userRepo.findById(userId).ifPresent(headUser -> {
+			String departmentName = departmentRepo.findById(departmentId)
+					.map(Department::getName).orElse("-");
+			
+			producer.publishDepartmentHeadAssigned(new DepartmentHeadAssignedEvent(
+					headUser.getIdUser(), departmentName, String.valueOf(startingDate),
+					headUser.getEmail(),
+					headUser.getName() + " " + headUser.getSurname()));
+		});
 	}
 
 }
