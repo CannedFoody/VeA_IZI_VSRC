@@ -6,8 +6,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import eu.virac.vea_izi_vsrc.config.KafkaTopicConfig;
+import eu.virac.vea_izi_vsrc.event.DepartmentHeadAssignedEvent;
 import eu.virac.vea_izi_vsrc.event.KpiCreatedEvent;
+import eu.virac.vea_izi_vsrc.event.KpiOverlookerChangedEvent;
+import eu.virac.vea_izi_vsrc.event.KpiStatusChangedEvent;
+import eu.virac.vea_izi_vsrc.event.TaskCreatedEvent;
 import eu.virac.vea_izi_vsrc.event.TaskStatusChangedEvent;
+import eu.virac.vea_izi_vsrc.event.UserCreatedEvent;
+import eu.virac.vea_izi_vsrc.event.UserRoleChangedEvent;
 
 @Component
 public class NotificationEventProducer {
@@ -28,6 +34,30 @@ public class NotificationEventProducer {
 		send(KafkaTopicConfig.KPI_CREATED_TOPIC, String.valueOf(event.kpiId()), event);
 	}
 
+	public void publishKpiStatusChanged(KpiStatusChangedEvent event) {
+		send(KafkaTopicConfig.KPI_STATUS_TOPIC, String.valueOf(event.kpiId()), event);
+	}
+
+	public void publishTaskCreated(TaskCreatedEvent event) {
+		send(KafkaTopicConfig.TASK_CREATED_TOPIC, String.valueOf(event.taskId()), event);
+	}
+
+	public void publishUserCreated(UserCreatedEvent event) {
+		send(KafkaTopicConfig.USER_CREATED_TOPIC, String.valueOf(event.userId()), event);
+	}
+
+	public void publishDepartmentHeadAssigned(DepartmentHeadAssignedEvent event) {
+		send(KafkaTopicConfig.DEPARTMENT_HEAD_TOPIC, String.valueOf(event.userId()), event);
+	}
+
+	public void publishKpiOverlookerChanged(KpiOverlookerChangedEvent event) {
+		send(KafkaTopicConfig.KPI_OVERLOOKER_TOPIC, String.valueOf(event.kpiId()), event);
+	}
+
+	public void publishUserRoleChanged(UserRoleChangedEvent event) {
+		send(KafkaTopicConfig.USER_ROLE_TOPIC, String.valueOf(event.userId()), event);
+	}
+
 	private void send(String topic, String key, Object event) {
 		try {
 			kafkaTemplate.send(topic, key, event).whenComplete((result, ex) -> {
@@ -39,7 +69,7 @@ public class NotificationEventProducer {
 				}
 			});
 		} catch (Exception e) {
-			// Saving the task/KPI must still succeed even if Kafka is down
+			// Saving the data must still succeed even if Kafka is down
 			log.error("[PRODUCER] Could not send to '{}': {}", topic, e.getMessage());
 		}
 	}
