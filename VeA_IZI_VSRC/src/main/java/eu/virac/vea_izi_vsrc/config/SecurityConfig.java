@@ -45,7 +45,8 @@ public class SecurityConfig {
 				.requestMatchers("/admin/department/add").hasAuthority("ADMIN")
 				.requestMatchers("/admin/task/filter").authenticated()
 				.requestMatchers("/admin/**").hasAuthority("ADMIN")
-				.requestMatchers("/User/**").permitAll());
+				.requestMatchers("/User/**").permitAll()
+				.requestMatchers("/api/**").permitAll());
 		http.formLogin(auth->auth.permitAll());
 		
 		return http.build();

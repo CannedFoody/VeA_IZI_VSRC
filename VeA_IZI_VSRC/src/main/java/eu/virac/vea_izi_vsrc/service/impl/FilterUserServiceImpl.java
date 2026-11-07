@@ -43,4 +43,26 @@ public class FilterUserServiceImpl implements IFilterUserService {
 		return filtered_result;
 	}
 
+	
+	@Override
+	public ArrayList<User> filterUsersByNameOrSurname(String keyword) throws Exception {
+
+	    if (keyword == null || keyword.isBlank()) {
+	        throw new Exception("No keyword passed...");
+	    }
+
+	    if (userRepo.count() == 0) {
+	        throw new Exception("User repo is empty...");
+	    }
+
+	    ArrayList<User> filteredResult = 
+	    		userRepo.findByNameContainingIgnoreCaseOrSurnameContainingIgnoreCase(keyword, keyword);
+
+	    if (filteredResult.isEmpty()) {
+	        throw new Exception("No users found with matching name or surname...");
+	    }
+
+	    return filteredResult;
+	}
+
 }

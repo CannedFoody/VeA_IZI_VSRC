@@ -6,4 +6,5 @@ import eu.virac.vea_izi_vsrc.model.SubCategory;
 
 public interface ISubCategoryFilterService {
     List<SubCategory> filterByKeyword(String keyword);
+
 }

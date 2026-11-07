@@ -42,4 +42,6 @@ public interface IKPIRepo extends CrudRepository<KPI, Long> {
                           @Param("category") Category category,
                           @Param("creationDate") LocalDate creationDate,
                           @Param("deadline") LocalDate deadline);
+
 }
+

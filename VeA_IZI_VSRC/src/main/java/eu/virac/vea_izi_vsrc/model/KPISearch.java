@@ -35,4 +35,6 @@ public class KPISearch {
         this.deadline_is_passed = deadline_is_passed;
         this.category = category;
     }
+
 }
+
